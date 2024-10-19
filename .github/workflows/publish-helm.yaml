@@ -27,7 +27,7 @@ jobs:
         shell: bash
         working-directory: charts
         run: |
-          chart_info=$(helm show chart sindri-scroll
+          chart_info=$(helm show chart sindri-scroll)
           chart_name=$(echo "$chart_info" | grep '^name:' | awk '{print $2}')
           chart_version=$(echo "$chart_info" | grep '^version:' | awk '{print $2}')
           artifact_name="${chart_name}-${chart_version}.tgz"
