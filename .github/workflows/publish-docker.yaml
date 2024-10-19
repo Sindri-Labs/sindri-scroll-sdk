@@ -35,15 +35,16 @@ jobs:
           echo "IMAGE_NAME=${image_name}"
           echo "IMAGE_TAG=${image_tag}"
 
-      # - name: Build Docker image
-      #   env:
-      #     IMAGE_NAME: ${{ steps.format-tag.outputs.IMAGE_NAME }}
-      #     IMAGE_TAG: ${{ steps.format-tag.outputs.IMAGE_TAG }}
-      #   run: |
-      #     docker build -f docker/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
-      # - name: Push Docker image
-      #   env:
-      #     IMAGE_NAME: ${{ steps.format-tag.outputs.IMAGE_NAME }}
-      #     IMAGE_TAG: ${{ steps.format-tag.outputs.IMAGE_TAG }}
-      #   run: |
-      #     docker push $IMAGE_NAME:$IMAGE_TAG
+      - name: Build Docker image
+        env:
+          IMAGE_NAME: ${{ steps.format-tag.outputs.IMAGE_NAME }}
+          IMAGE_TAG: ${{ steps.format-tag.outputs.IMAGE_TAG }}
+        run: |
+          docker build -f docker/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
+
+      - name: Push Docker image
+        env:
+          IMAGE_NAME: ${{ steps.format-tag.outputs.IMAGE_NAME }}
+          IMAGE_TAG: ${{ steps.format-tag.outputs.IMAGE_TAG }}
+        run: |
+          docker push $IMAGE_NAME:$IMAGE_TAG
