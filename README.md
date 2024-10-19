@@ -12,3 +12,11 @@ Compile and launch the prover via
 ```
 cargo run --release
 ```
+
+
+## Docker Image
+
+You can build the docker image locally via
+```
+docker build -t sindri-prover -f docker/Dockerfile .
+```
