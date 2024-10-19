@@ -1,0 +1,8 @@
+version: '3.8'
+
+services:
+  prover:
+    image: sindri-prover
+    volumes:
+      - ./keys:/keys
+      - ./config.json:/config.json
