@@ -20,7 +20,7 @@ jobs:
           USERNAME: github-actions
           PASSWORD: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          helm login https://ghcr.io -u $USERNAME -p $PASSWORD
+          helm registry login https://ghcr.io -u $USERNAME -p $PASSWORD
 
       - name: Chart Info
         id: chart-info
