@@ -31,7 +31,7 @@ jobs:
           chart_name=$(echo "$chart_info" | grep '^name:' | awk '{print $2}')
           chart_version=$(echo "$chart_info" | grep '^version:' | awk '{print $2}')
           artifact_name="${chart_name}-${chart_version}.tgz"
-          registry_name="ghcr.io/${{ github.repository }}"
+          registry_name="ghcr.io/${{ github.repository }}/helm"
           registry_name="${registry_name,,}"
 
           echo "chart_name=$chart_name" >> "$GITHUB_OUTPUT"
@@ -50,31 +50,3 @@ jobs:
           helm push $ARTIFACT_NAME oci://$REGISTRY_NAME
 
           echo "Chart pushed: $ARTIFACT_NAME" >> $GITHUB_STEP_SUMMARY
-
-      # - name: Format Tag
-      #   id: format-tag
-      #   env:
-      #     IMAGE_NAME: ghcr.io/${{ github.repository }}/prover
-      #     IMAGE_TAG: ${{ github.ref_name }}
-      #   run: |
-      #     image_name="${IMAGE_NAME,,}"
-      #     image_tag="${IMAGE_TAG,,}"
-      #     echo "IMAGE_NAME=${image_name}" >> $GITHUB_OUTPUT
-      #     echo "IMAGE_TAG=${image_tag}" >> $GITHUB_OUTPUT
-
-      #     echo "IMAGE_NAME=${image_name}"
-      #     echo "IMAGE_TAG=${image_tag}"
-
-      # - name: Build Docker image
-      #   env:
-      #     IMAGE_NAME: ${{ steps.format-tag.outputs.IMAGE_NAME }}
-      #     IMAGE_TAG: ${{ steps.format-tag.outputs.IMAGE_TAG }}
-      #   run: |
-      #     docker build -f docker/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
-
-      # - name: Push Docker image
-      #   env:
-      #     IMAGE_NAME: ${{ steps.format-tag.outputs.IMAGE_NAME }}
-      #     IMAGE_TAG: ${{ steps.format-tag.outputs.IMAGE_TAG }}
-      #   run: |
-      #     docker push $IMAGE_NAME:$IMAGE_TAG
