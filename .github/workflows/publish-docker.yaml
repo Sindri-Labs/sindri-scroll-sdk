@@ -20,3 +20,15 @@ jobs:
           registry: ghcr.io
           username: github-actions
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Build Docker image
+        env:
+          IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/${{ github.repository_name }}
+          IMAGE_TAG: ${{ github.ref }}
+        run: |
+          docker build -f docker/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
+      - name: Push Docker image
+        env:
+          IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/${{ github.repository_name }}
+          IMAGE_TAG: ${{ github.ref }}
+        run: |
+          docker push $IMAGE_NAME:$IMAGE_TAG
