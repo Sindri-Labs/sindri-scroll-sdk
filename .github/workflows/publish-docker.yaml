@@ -32,7 +32,7 @@ jobs:
           echo "IMAGE_NAME=${image_name}" >> $GITHUB_OUTPUT
           echo "IMAGE_TAG=${image_tag}" >> $GITHUB_OUTPUT
 
-          echo "IMAGE_NAME=${image_name}
+          echo "IMAGE_NAME=${image_name}"
           echo "IMAGE_TAG=${image_tag}"
 
       # - name: Build Docker image
