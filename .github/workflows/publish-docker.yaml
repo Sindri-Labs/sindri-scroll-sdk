@@ -5,10 +5,6 @@ on:
     types: [published]
   workflow_dispatch: {}
 
-env:
-  IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/${{ github.repository }}/sindri-prover
-  IMAGE_TAG: ${{ github.ref_name }}
-
 jobs:
   build_publish:
     runs-on: ubuntu-latest
@@ -24,15 +20,28 @@ jobs:
           registry: ghcr.io
           username: github-actions
           password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Format Tag
+        id: format-tag
+        env:
+          IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/${{ github.repository }}/sindri-prover
+          IMAGE_TAG: ${{ github.ref_name }}
+        run: |
+          image_name="${IMAGE_NAME,,}"
+          image_tag="${IMAGE_TAG,,}"
+          echo "IMAGE_NAME=${image_name}" >> $GITHUB_OUTPUT
+          echo "IMAGE_TAG=${image_tag}" >> $GITHUB_OUTPUT
+
       - name: Build Docker image
         env:
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
-          IMAGE_TAG: ${{ env.IMAGE_TAG }}
+          IMAGE_NAME: ${{ steps.format-tag.outputs.IMAGE_NAME }}
+          IMAGE_TAG: ${{ steps.format-tag.outputs.IMAGE_TAG }}
         run: |
+          LOWER_PROJECT="${PROJECT,,}"
+          echo "LOWER_PROJECT=${LOWER_PROJECT}" >> $GITHUB_OUTPUT
           docker build -f docker/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
       - name: Push Docker image
         env:
-          IMAGE_NAME: ${{ env.IMAGE_NAME }}
-          IMAGE_TAG: ${{ env.IMAGE_TAG }}
+          IMAGE_NAME: ${{ steps.format-tag.outputs.IMAGE_NAME }}
+          IMAGE_TAG: ${{ steps.format-tag.outputs.IMAGE_TAG }}
         run: |
           docker push $IMAGE_NAME:$IMAGE_TAG
