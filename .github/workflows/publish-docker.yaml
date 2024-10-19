@@ -23,7 +23,7 @@ jobs:
       - name: Format Tag
         id: format-tag
         env:
-          IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/${{ github.repository }}/sindri-prover
+          IMAGE_NAME: ghcr.io/${{ github.repository }}/sindri-prover
           IMAGE_TAG: ${{ github.ref_name }}
         run: |
           image_name="${IMAGE_NAME,,}"
