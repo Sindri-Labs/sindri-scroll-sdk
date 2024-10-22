@@ -9,6 +9,7 @@ use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
 use reqwest_retry::{policies::ExponentialBackoff, RetryTransientMiddleware};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+
 use scroll_proving_sdk::{
     config::{CloudProverConfig, Config},
     prover::{
@@ -20,7 +21,6 @@ use scroll_proving_sdk::{
     },
     utils::init_tracing,
 };
-
 
 #[derive(Parser, Debug)]
 #[clap(disable_version_flag = true)]
