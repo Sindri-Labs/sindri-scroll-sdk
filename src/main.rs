@@ -7,7 +7,7 @@ use reqwest::{
 };
 use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
 use reqwest_retry::{policies::ExponentialBackoff, RetryTransientMiddleware};
-use serde::{Deserialize, Deserializer, Serialize};
+use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use scroll_proving_sdk::{
     config::{CloudProverConfig, Config},
@@ -21,23 +21,6 @@ use scroll_proving_sdk::{
     utils::init_tracing,
 };
 
-
-fn deeply_nested_serde<'de, D>(deserializer: D) -> Result<Option<serde_json::Value>, D::Error>
-where
-    D: Deserializer<'de>,
-{
-    // First turn into string
-    let s: &str = Deserialize::deserialize(deserializer)?;
-
-    // Then use the serde_json deserializer to transform that result into a Value 
-    let mut visitor = serde_json::Deserializer::from_str(s);
-    visitor.disable_recursion_limit();
-    let visitor = serde_stacker::Deserializer::new(&mut visitor);
-
-    let value = serde::Deserialize::deserialize(visitor).expect("Unable to deserialize response body");
-
-    Ok(Some(value))
-}
 
 #[derive(Parser, Debug)]
 #[clap(disable_version_flag = true)]
@@ -68,9 +51,7 @@ struct SindriTaskStatusResponse {
     pub compute_time_sec: Option<f64>,
     pub queue_time_sec: Option<f64>,
     pub verification_key: Option<VerificationKey>,
-    #[serde(deserialize_with = "deeply_nested_serde")]
     pub proof: Option<serde_json::Value>,
-    #[serde(deserialize_with = "deeply_nested_serde")]
     pub public: Option<serde_json::Value>,
     pub warnings: Option<Vec<String>>,
     pub error: Option<String>,
@@ -413,7 +394,12 @@ impl CloudProver {
 
         log::info!("[sindir client], {method}, received response");
         log::debug!("[sindir client], {method}, response: {response_body}");
-        serde_json::from_str(&response_body).map_err(|e| anyhow::anyhow!(e))
+        
+        let mut deserializer = serde_json::Deserializer::from_str(&response_body);
+        deserializer.disable_recursion_limit();
+        let deserializer = serde_stacker::Deserializer::new(&mut deserializer);
+
+        serde::Deserialize::deserialize(deserializer).map_err(|e| anyhow::anyhow!(e))
     }
 }
 
