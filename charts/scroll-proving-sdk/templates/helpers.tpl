@@ -1,16 +1,15 @@
 {{/*
 Expand the name of the chart.
 */}}
-{{- define "sindri-scroll.name" -}}
+{{- define "scroll-sdk.name" -}}
 {{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" }}
 {{- end }}
-
 {{/*
 Create a default fully qualified app name.
 We truncate at 63 chars because some Kubernetes name fields are limited to this (by the DNS naming spec).
 If release name contains chart name it will be used as a full name.
 */}}
-{{- define "sindri-scroll.fullname" -}}
+{{- define "scroll-sdk.fullname" -}}
 {{- if .Values.fullnameOverride }}
 {{- .Values.fullnameOverride | trunc 63 | trimSuffix "-" }}
 {{- else }}
@@ -22,41 +21,27 @@ If release name contains chart name it will be used as a full name.
 {{- end }}
 {{- end }}
 {{- end }}
-
 {{/*
-Create chart name and version as used by the chart label.
+Create chart name and build as used by the chart label.
 */}}
-{{- define "sindri-scroll.chart" -}}
+{{- define "scroll-sdk.chart" -}}
 {{- printf "%s-%s" .Chart.Name .Chart.Version | replace "+" "_" | trunc 63 | trimSuffix "-" }}
 {{- end }}
-
 {{/*
 Common labels
 */}}
-{{- define "sindri-scroll.labels" -}}
-helm.sh/chart: {{ include "sindri-scroll.chart" . }}
-{{ include "sindri-scroll.selectorLabels" . }}
+{{- define "scroll-sdk.labels" -}}
+helm.sh/chart: {{ include "scroll-sdk.chart" . }}
+{{ include "scroll-sdk.selectorLabels" . }}
 {{- if .Chart.AppVersion }}
-app.kubernetes.io/version: {{ .Chart.AppVersion | quote }}
+app.kubernetes.io/build: {{ .Chart.AppVersion | quote }}
 {{- end }}
 app.kubernetes.io/managed-by: {{ .Release.Service }}
 {{- end }}
-
 {{/*
 Selector labels
 */}}
-{{- define "sindri-scroll.selectorLabels" -}}
-app.kubernetes.io/name: {{ include "sindri-scroll.name" . }}
+{{- define "scroll-sdk.selectorLabels" -}}
+app.kubernetes.io/name: {{ include "scroll-sdk.name" . }}
 app.kubernetes.io/instance: {{ .Release.Name }}
-{{- end }}
-
-{{/*
-Create the name of the service account to use
-*/}}
-{{- define "sindri-scroll.serviceAccountName" -}}
-{{- if .Values.serviceAccount.create }}
-{{- default (include "sindri-scroll.fullname" .) .Values.serviceAccount.name }}
-{{- else }}
-{{- default "default" .Values.serviceAccount.name }}
-{{- end }}
 {{- end }}
