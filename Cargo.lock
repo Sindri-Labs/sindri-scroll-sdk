@@ -4363,6 +4363,7 @@ dependencies = [
  "scroll-proving-sdk",
  "serde",
  "serde_json",
+ "serde_stacker",
  "sled",
  "tiny-keccak",
  "tokio",

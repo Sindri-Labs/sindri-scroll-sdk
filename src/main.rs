@@ -394,7 +394,15 @@ impl CloudProver {
 
         log::info!("[sindir client], {method}, received response");
         log::debug!("[sindir client], {method}, response: {response_body}");
-        serde_json::from_str(&response_body).map_err(|e| anyhow::anyhow!(e))
+
+        // Temporary location of the solution to issues surrounding deserializing deeply nested JSON data.
+        // Mimics the upstream solution:
+        // https://github.com/scroll-tech/zkevm-circuits/blob/e19504c00b5b5b39b3de7bad0c186b4dbcc61eb5/prover/src/io.rs#L22
+        let mut deserializer = serde_json::Deserializer::from_str(&response_body);
+        deserializer.disable_recursion_limit();
+        let deserializer = serde_stacker::Deserializer::new(&mut deserializer);
+
+        serde::Deserialize::deserialize(deserializer).map_err(|e| anyhow::anyhow!(e))
     }
 }
 
