@@ -6,7 +6,7 @@ First, create your `config.json` file from a template
 ```bash
 cp example.config.json config.json
 ```
-Now edit the `config.json` file to supply your `SINDRI_API_KEY`.
+Now edit the `config.json` file to supply your Sindri API key.
 
 Compile and launch the prover via
 ```bash
