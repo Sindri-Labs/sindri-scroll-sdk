@@ -265,7 +265,7 @@ fn build_prove_error_response(req: &ProveRequest, error_msg: &str) -> ProveRespo
     }
 }
 
-// get rid of the "batch_proofs" layer because sindri expects the inner array as the input directly
+// Remove the "batch_proofs" layer because Sindri API expects the inner array as the input directly
 fn reprocess_prove_input(req: &ProveRequest) -> anyhow::Result<String> {
     if req.circuit_type == CircuitType::Bundle {
         let bundle_task_detail: prover_darwin_v2::BundleProvingTask =
@@ -368,7 +368,7 @@ impl CloudProver {
     {
         let url = self.build_url(method_class, method, query_params)?;
 
-        log::info!("[sindri client]: {:?}", url.as_str());
+        log::info!("[Sindri client]: {:?}", url.as_str());
 
         let resp_builder = match request_body {
             Some(body) => self.client.post(url).body(body),
@@ -386,7 +386,6 @@ impl CloudProver {
         let status = response.status();
         if !(status >= http::status::StatusCode::OK && status <= http::status::StatusCode::ACCEPTED)
         {
-            // log::error!("[sindri client], {method}, status not ok: {}", status);
             anyhow::bail!("[Sindri client], {method}, status not ok: {}", status)
         }
 
