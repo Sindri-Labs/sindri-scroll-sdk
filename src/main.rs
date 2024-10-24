@@ -85,7 +85,7 @@ enum MethodClass {
     Proof(String),
 }
 
-// reencode the vk because the encoding scheme used in sindri is different from the one used in scroll internally
+// Re-encode the vk because the encoding scheme used by Sindri is different from the one used in scroll internally.
 fn reformat_vk(vk_old: String) -> anyhow::Result<String> {
     log::debug!("vk_old: {:?}", vk_old);
 
@@ -386,14 +386,14 @@ impl CloudProver {
         let status = response.status();
         if !(status >= http::status::StatusCode::OK && status <= http::status::StatusCode::ACCEPTED)
         {
-            // log::error!("[sindir client], {method}, status not ok: {}", status);
-            anyhow::bail!("[sindir client], {method}, status not ok: {}", status)
+            // log::error!("[sindri client], {method}, status not ok: {}", status);
+            anyhow::bail!("[Sindri client], {method}, status not ok: {}", status)
         }
 
         let response_body = response.text().await?;
 
-        log::info!("[sindir client], {method}, received response");
-        log::debug!("[sindir client], {method}, response: {response_body}");
+        log::info!("[Sindri client], {method}, received response");
+        log::debug!("[Sindri client], {method}, response: {response_body}");
 
         // Temporary location of the solution to issues surrounding deserializing deeply nested JSON data.
         // Mimics the upstream solution:
