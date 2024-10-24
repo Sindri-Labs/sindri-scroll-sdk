@@ -6,7 +6,7 @@ First, create your `config.json` file from a template
 ```
 cp example.config.json config.json
 ```
-Now edit the config to supply your Sindri API key.
+Now edit the config to supply your `SINDRI_API_KEY`.
 
 Compile and launch the prover via
 ```
