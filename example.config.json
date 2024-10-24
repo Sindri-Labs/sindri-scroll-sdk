@@ -16,7 +16,7 @@
         "n_workers": 1,
         "cloud": {
             "base_url": "https://sindri.app/api/v1/",
-            "api_key": "SINDRI_API_KEY",
+            "api_key": "<your Sindri API key>",
             "retry_count": 3,
             "retry_wait_time_sec": 5,
             "connection_timeout_sec": 60
