@@ -12,29 +12,32 @@ Sindri makes zero-knowledge infrastructure simple and accessible, facilitating a
 This repository hosts the images and Helm charts designed to perform proof generation for a Scroll SDK chain.
 The following diagram depicts how the Scroll SDK components work together when you use Sindri as a prover.
 ```mermaid
-graph TB
+---
+title: Scroll SDK with Sindri Provers
+---
+flowchart LR
     subgraph settle[Settlement Layer]
         direction LR
-        BC[Bridge Contract] -.-> RC[Rollup Contract]
-        RC -.-> BC
     end
     subgraph sequence[Sequencing Layer]
         direction LR
-        EN[Execution Node] -.-> RN[Rollup Node]
     end
     subgraph prove[Proving Layer]
         direction LR
-        C[Coordinator] -.->|Tasks| P@{ shape: processes, label: "Provers" }
+        C["**Coordinator**"] -.->|Tasks| P@{ shape: processes, label: "**Provers**\nThese components outsource proof generation to Sindri's GPU workers" }
         P -.->|Proofs| C
     end
-    subgraph sindri[Sindri Circuits]
+    subgraph sindri["Scroll Circuits on Sindri"]
         direction TB
-        Chunk
-        Batch
-        Bundle
+        Chunk["**Chunk**
+        Verified execution of contiguous blocks (i.e. a zkEVM proof)"]
+        Batch["**Batch**
+        Intermediate aggregation of multiple chunks"]
+        Bundle["**Bundle**
+        Final aggregate proof sent to the settlement layer"]
     end
-    settle --> sequence
-    sequence --> prove
+    settle o--o sequence
+    sequence o--o prove
     P --> Chunk
     P --> Batch
     P --> Bundle
