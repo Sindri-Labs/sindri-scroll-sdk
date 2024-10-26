@@ -35,13 +35,16 @@ jobs:
         run: |
           helm registry login https://ghcr.io -u $USERNAME -p $PASSWORD
 
-      - name: Versioning
-        id: versioning
+      - name: Release Version
+        if: ${{ github.event_name == 'release' }}
         env:
-          GH_EVENT: ${{ toJson(github.event) }}
+          RELEASE_VERSION: ${{ github.event.release.tag_name }}
         run: |
-          echo $GH_EVENT | jq
-          # semver_pat="^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$"
+          semver_pat="^v(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)$"
+          if [[ ! $version =~ $semver_regex ]]; then
+            echo "Invalid version: $RELEASE_VERSION"
+            exit 1
+          fi
 
       # workflow_dispatch
       # release
