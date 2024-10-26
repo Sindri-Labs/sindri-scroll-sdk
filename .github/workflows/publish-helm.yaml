@@ -38,7 +38,7 @@ jobs:
       - name: Versioning
         id: versioning
         run: |
-          echo "Action: ${{ github.event.release.tag_name }}"
+          echo "${{ github }}" | jq
           # semver_pat="^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$"
 
       # - name: Chart Info
