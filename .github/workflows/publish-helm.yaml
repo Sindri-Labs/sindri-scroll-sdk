@@ -13,8 +13,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4.2.2
 
+      - name: Update Dependencies
+        run: helm dependency update charts/scroll-proving-sindri
+
       - name: Lint Chart
-        run: helm lint charts/sindri-scroll
+        run: helm lint charts/scroll-proving-sindri
 
   # build_publish:
   #   name: Build & Publish Helm
