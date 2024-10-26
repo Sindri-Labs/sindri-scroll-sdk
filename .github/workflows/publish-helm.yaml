@@ -38,13 +38,23 @@ jobs:
       - name: Release Version
         if: ${{ github.event_name == 'release' }}
         env:
-          RELEASE_VERSION: ${{ github.event.release.tag_name }}
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          IS_PRERELEASE: ${{ github.event.release.prerelease }}
         run: |
-          semver_pat="^v(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)$"
-          if [[ ! $version =~ $semver_regex ]]; then
-            echo "Invalid version: $RELEASE_VERSION"
+          if [[ "${IS_PRERELEASE}" == "true" ]]; then
+            semver_pat="^v(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>([1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)))$"
+          else
+            semver_pat="^v(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)$"
+          fi
+
+          if [[ ! $RELEASE_TAG =~ $semver_regex ]]; then
+            echo "Invalid version: $RELEASE_TAG"
             exit 1
           fi
+
+          release_version=${RELEASE_TAG#v}
+          echo "RELEASE_VERESION=${release_version}" >> $GITHUB_ENV
+          echo $release_version
 
       # workflow_dispatch
       # release
