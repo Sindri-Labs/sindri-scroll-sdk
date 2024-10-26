@@ -49,13 +49,132 @@ For production deployments, please consult the official [Scroll SDK documentatio
 
 # Getting Started
 
-1. Obtain a Sindri API key.
+While this section primarily reiterates [Scroll's Devnet Guide](https://scroll-sdk-init.docs.scroll.xyz/en/sdk/guides/devnet-deployment/), it includes adjustments specifically for Ubuntu environments.
 
+### Prerequisites
+
+You will need to obtain an API key to use Sindri.
+If you have not already created an account, follow the sign up link posted at the top left of this README.
 After logging into the [Sindri front-end](https://sindri.app/login), you can create and manage your API Keys within the [API Keys Settings page](https://sindri.app/z/me/page/settings/api-keys).
 
-2. 
+You should also install `docker`, `kubectl`, `minikube`, `helm`, `node`, and `scrollsdk` as instructed by the official [Scroll SDK documentation](https://scroll-sdk-init.docs.scroll.xyz/en/sdk/guides/devnet-deployment/#prerequisites).
+
+### Obtaining and Configuring Charts
+
+There is no need to work in this repository, as the guide will be utilizing publicly hosted images and Helm charts.
+However, you will need to clone the Scroll SDK repo and navigate to the `devnet/` directory to access some helper scripts.
+```bash
+git clone git@github.com:scroll-tech/scroll-sdk.git
+cd scroll-sdk/devnet
+```
+
+Next we will manually pull and extract the chart for the latest version of Scroll SDK.
+```bash
+make bootstrap
+```
+> ⚠️ **Encountering Permission Issues?**<br>
+> If you are given any prompts during the execution of the bootstrap command, then there is likely a root vs. user mismatch between configuration shell scripts and the downloaded files.
+> You can solve this by exiting the bootstrap process with `ctrl+c` and running the `config` command separately with `sudo make config`.
+
+
+### Installing the Helm Chart
+
+In this step, we will launch the sequencing layer, the coordinator, and various visibility services.
+Because provers require manual configuration, we will start those separately in a later section.
+Note that the standard devnet settings do not include any proving layer services, so you will need to add the following two lines to the end of the `install` command in `scroll-sdk/devnet/Makefile`.
+```bash
+    --set coordinator-api.enabled=true \
+    --set coordinator-cron.enabled=true
+```
+After that adjustment, enter `make install` in your terminal to start the chain.
+You can monitor the progress and health of all the services via the command `kubectl get pods`.
+
+> 🕒 **Waiting on the coordinator?**<br>
+> It can take awhile for the coordinator to finish starting.
+> There are 2 init pods and then the final coordinator-api pod.
+> The assets-download runs first, followed by the parameter-download.
+> You can check the logs of each with:
+
+assets-download
+`kubectl logs coordinator-api-0 -c assets-download`
+you know it is finished when you see:
+```
+/verifier/assets/hi:
+evm_verifier.bin
+layer2.config
+layer4.config
+vk_batch.vkey
+vk_bundle.vkey
+vk_chunk.vkey
+
+/verifier/assets/lo:
+evm_verifier.bin
+layer2.config
+layer4.config
+vk_batch.vkey
+vk_bundle.vkey
+vk_chunk.vkey
+```
+
+
+`kubectl logs coordinator-api-0 -c parameter-download`
+you'll know its finished when you see:
+```
+/verifier/assets/hi:
+evm_verifier.bin
+layer2.config
+layer4.config
+vk_batch.vkey
+vk_bundle.vkey
+vk_chunk.vkey
+
+/verifier/assets/lo:
+evm_verifier.bin
+layer2.config
+layer4.config
+vk_batch.vkey
+vk_bundle.vkey
+vk_chunk.vkey
+```
+
+### Forwarding
+
+5) Enable kubectl to port-forward to 80 & 443.
+   ```
+   sudo setcap CAP_NET_BIND_SERVICE=+eip $(which kubectl)
+   ```
+
+6) **hacky**
+   Update your hosts file (on your local machine)
+
+   ```
+    <Your Remote VM IP Address> l1-devnet.scrollsdk
+    <Your Remote VM IP Address> bridge-history.scrollsdk
+    <Your Remote VM IP Address> frontends.scrollsdk
+    <Your Remote VM IP Address> grafana.scrollsdk
+    <Your Remote VM IP Address> l1-devnet-explorer.scrollsdk
+    <Your Remote VM IP Address> l2-rpc.scrollsdk
+    <Your Remote VM IP Address> blockscout.scrollsdk
+    <Your Remote VM IP Address> bridge-history-api.scrollsdk
+   ```
+
+6) start Port-Forward
+   ```
+   kubectl port-forward -n ingress-nginx  --address 0.0.0.0 service/ingress-nginx-controller 80:80 443:443
+   ```
+    Note -- when you stop the port forward the endpionts will not longer be accessible.
+
+
+You should be able to access the endpoints via your browser.
+
+NOTE:  if you delete & reinstall you may need to remove the volumes created inside of minikube.
+a) list your volumes with `kubectl get pvc`
+b) delete them with `kubectl delete pvc <pvc-name> --force`
+
 
 # Internal Development
+
+This section is intended for Sindri developers.
 
 ### Local Build
 
