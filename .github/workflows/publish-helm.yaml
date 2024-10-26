@@ -16,48 +16,56 @@ jobs:
       - name: Lint Chart
         run: helm lint charts/scroll-proving-sindri
 
-  # build_publish:
-  #   name: Build & Publish Helm
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     contents: read
-  #     packages: write
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4.2.1
+  build_publish:
+    name: Build & Publish Helm
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
 
-  #     - name: Login to GitHub Container Registry
-  #       env:
-  #         USERNAME: github-actions
-  #         PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-  #       run: |
-  #         helm registry login https://ghcr.io -u $USERNAME -p $PASSWORD
+      - name: Login to GitHub Container Registry
+        env:
+          USERNAME: github-actions
+          PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          helm registry login https://ghcr.io -u $USERNAME -p $PASSWORD
 
-  #     - name: Chart Info
-  #       id: chart-info
-  #       shell: bash
-  #       working-directory: charts
-  #       run: |
-  #         chart_info=$(helm show chart sindri-scroll)
-  #         chart_name=$(echo "$chart_info" | grep '^name:' | awk '{print $2}')
-  #         chart_version=$(echo "$chart_info" | grep '^version:' | awk '{print $2}')
-  #         artifact_name="${chart_name}-${chart_version}.tgz"
-  #         registry_name="ghcr.io/${{ github.repository }}/helm"
-  #         registry_name="${registry_name,,}"
+      - name: Versioning
+        id: versioning
+        run: |
+          echo "Action: ${{ github.event.release.tag_name }}"
+          # semver_pat="^(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)(?:\.(?:0|[1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*))*))?(?:\+(?P<buildmetadata>[0-9a-zA-Z-]+(?:\.[0-9a-zA-Z-]+)*))?$"
 
-  #         echo "chart_name=$chart_name" >> "$GITHUB_OUTPUT"
-  #         echo "chart_version=$chart_version" >> "$GITHUB_OUTPUT"
-  #         echo "artifact_name=$artifact_name" >> "$GITHUB_OUTPUT"
-  #         echo "registry_name=$registry_name" >> "$GITHUB_OUTPUT"
+      # - name: Chart Info
+      #   id: chart-info
+      #   shell: bash
+      #   working-directory: charts
+      #   run: |
+      #     chart_info=$(helm show chart sindri-scroll)
+      #     chart_name=$(echo "$chart_info" | grep '^name:' | awk '{print $2}')
+      #     chart_version=$(echo "$chart_info" | grep '^version:' | awk '{print $2}')
+      #     artifact_name="${chart_name}-${chart_version}.tgz"
+      #     registry_name="ghcr.io/${{ github.repository }}/helm"
+      #     registry_name="${registry_name,,}"
 
-  #     - name: Package & Push Chart
-  #       working-directory: charts
-  #       env:
-  #         ARTIFACT_NAME: ${{ steps.chart-info.outputs.artifact_name }}
-  #         REGISTRY_NAME: ${{ steps.chart-info.outputs.registry_name }}
-  #       run: |
-  #         helm dependency update sindri-scroll
-  #         helm package sindri-scroll --destination .
-  #         helm push $ARTIFACT_NAME oci://$REGISTRY_NAME
+      #     echo "chart_name=$chart_name" >> "$GITHUB_OUTPUT"
+      #     echo "chart_version=$chart_version" >> "$GITHUB_OUTPUT"
+      #     echo "artifact_name=$artifact_name" >> "$GITHUB_OUTPUT"
+      #     echo "registry_name=$registry_name" >> "$GITHUB_OUTPUT"
 
-  #         echo "Chart pushed: $ARTIFACT_NAME" >> $GITHUB_STEP_SUMMARY
+      # - name: Package & Push Chart
+      #   working-directory: charts
+      #   env:
+      #     ARTIFACT_NAME: ${{ steps.chart-info.outputs.artifact_name }}
+      #     REGISTRY_NAME: ${{ steps.chart-info.outputs.registry_name }}
+      #   run: |
+      #     helm dependency update sindri-scroll
+      #     helm package sindri-scroll --destination .
+      #     helm push $ARTIFACT_NAME oci://$REGISTRY_NAME
+
+      #     echo "Chart pushed: $ARTIFACT_NAME" >> $GITHUB_STEP_SUMMARY

@@ -8,7 +8,7 @@ Chart for deploying the Sindri proving service for Scroll.
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| sindri-labs |  | <https://github.com/Sindri-Labs/sindri-scroll-sdk> |
+| sindri-labss |  | <https://github.com/Sindri-Labs/sindri-scroll-sdk> |
 
 ## Requirements
 
