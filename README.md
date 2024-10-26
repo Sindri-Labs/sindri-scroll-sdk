@@ -59,6 +59,11 @@ After logging into the [Sindri front-end](https://sindri.app/login), you can cre
 
 You should also install `docker`, `kubectl`, `minikube`, `helm`, `node`, and `scrollsdk` as instructed by the official [Scroll SDK documentation](https://scroll-sdk-init.docs.scroll.xyz/en/sdk/guides/devnet-deployment/#prerequisites).
 
+At this point, you should start `minikube` via
+```
+minikube start --driver=docker
+```
+
 ### Obtaining and Configuring Charts
 
 There is no need to work in this repository, as the guide will be utilizing publicly hosted images and Helm charts.
@@ -90,87 +95,54 @@ After that adjustment, enter `make install` in your terminal to start the chain.
 You can monitor the progress and health of all the services via the command `kubectl get pods`.
 
 > 🕒 **Waiting on the coordinator?**<br>
-> It can take awhile for the coordinator to finish starting.
-> There are 2 init pods and then the final coordinator-api pod.
-> The assets-download runs first, followed by the parameter-download.
-> You can check the logs of each with:
+> An essential functionality of the coordinator is the validation of proofs that are returned from a prover.
+> For this reason, there are two initial pods (`assets-download` and `parameter-download`) which must pull zkEVM circuit artifact files before the final `coordinator-api` pod starts.
+> You can watch the progress of the first pod with `kubectl logs coordinator-api-0 -c assets-download`.
+> You should see six files in both `verifier/assets/hi` and `verifier/assets/lo` when that download is finished.
+> Similarly, you can watch the progress of the trusted setup download via `kubectl logs coordinator-api-0 -c parameter-download`.
+> This process will take longer as these files are of considerable size (e.g. 8Gb).
 
-assets-download
-`kubectl logs coordinator-api-0 -c assets-download`
-you know it is finished when you see:
-```
-/verifier/assets/hi:
-evm_verifier.bin
-layer2.config
-layer4.config
-vk_batch.vkey
-vk_bundle.vkey
-vk_chunk.vkey
+### Accessing Services Locally
 
-/verifier/assets/lo:
-evm_verifier.bin
-layer2.config
-layer4.config
-vk_batch.vkey
-vk_bundle.vkey
-vk_chunk.vkey
+Your chain is now running, but all of the pods are insulated inside of the minikube cluster.
+To interact with the chain, we need to first enable kubectl to port-forward. 
+The following command allows `kubectl` to bind to ports 80 and 443 (without running the application as root): 
+```bash
+sudo setcap CAP_NET_BIND_SERVICE=+eip $(which kubectl)
 ```
 
-
-`kubectl logs coordinator-api-0 -c parameter-download`
-you'll know its finished when you see:
-```
-/verifier/assets/hi:
-evm_verifier.bin
-layer2.config
-layer4.config
-vk_batch.vkey
-vk_bundle.vkey
-vk_chunk.vkey
-
-/verifier/assets/lo:
-evm_verifier.bin
-layer2.config
-layer4.config
-vk_batch.vkey
-vk_bundle.vkey
-vk_chunk.vkey
+Next, we want to add mappings between the Scroll SDK services and the VM address to our local DNS resolver.
+After looking up the address (by calling `kubectl get ingress` for example), copy that into the codeblock below.
+Then, you should append this to the end of your `/etc/hosts/` file.
+```bash
+<Your Remote VM IP Address> l1-devnet.scrollsdk
+<Your Remote VM IP Address> bridge-history.scrollsdk
+<Your Remote VM IP Address> frontends.scrollsdk
+<Your Remote VM IP Address> grafana.scrollsdk
+<Your Remote VM IP Address> l1-devnet-explorer.scrollsdk
+<Your Remote VM IP Address> l2-rpc.scrollsdk
+<Your Remote VM IP Address> blockscout.scrollsdk
+<Your Remote VM IP Address> bridge-history-api.scrollsdk
 ```
 
-### Forwarding
-
-5) Enable kubectl to port-forward to 80 & 443.
-   ```
-   sudo setcap CAP_NET_BIND_SERVICE=+eip $(which kubectl)
-   ```
-
-6) **hacky**
-   Update your hosts file (on your local machine)
-
-   ```
-    <Your Remote VM IP Address> l1-devnet.scrollsdk
-    <Your Remote VM IP Address> bridge-history.scrollsdk
-    <Your Remote VM IP Address> frontends.scrollsdk
-    <Your Remote VM IP Address> grafana.scrollsdk
-    <Your Remote VM IP Address> l1-devnet-explorer.scrollsdk
-    <Your Remote VM IP Address> l2-rpc.scrollsdk
-    <Your Remote VM IP Address> blockscout.scrollsdk
-    <Your Remote VM IP Address> bridge-history-api.scrollsdk
-   ```
-
-6) start Port-Forward
-   ```
-   kubectl port-forward -n ingress-nginx  --address 0.0.0.0 service/ingress-nginx-controller 80:80 443:443
-   ```
-    Note -- when you stop the port forward the endpionts will not longer be accessible.
-
-
+Finally, you can begin port forwarding via the following command.
+```bash
+kubectl port-forward -n ingress-nginx  --address 0.0.0.0 service/ingress-nginx-controller 80:80 443:443
+```
 You should be able to access the endpoints via your browser.
+[This section](https://scroll-sdk-init.docs.scroll.xyz/en/sdk/guides/devnet-deployment/#web-uis) of the Scroll SDK documentation provides an explanation of all the available dashboards.
 
-NOTE:  if you delete & reinstall you may need to remove the volumes created inside of minikube.
-a) list your volumes with `kubectl get pvc`
-b) delete them with `kubectl delete pvc <pvc-name> --force`
+## Launching Sindri Provers
 
+
+
+### Starting and Stopping Your Devnet
+
+You can stop all services with `make delete` and restart with `make install` (assuming you are still in the `scroll-sdk/devnet` directory).
+However, you may need to remove the volumes created inside of minikube.
+To do this:
+1. list your volumes with `kubectl get pvc`
+2. delete them with `kubectl delete pvc <pvc-name> --force`
 
 # Internal Development
 
