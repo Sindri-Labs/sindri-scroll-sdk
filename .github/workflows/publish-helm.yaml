@@ -42,9 +42,9 @@ jobs:
           IS_PRERELEASE: ${{ github.event.release.prerelease }}
         run: |
           if [[ "${IS_PRERELEASE}" == "true" ]]; then
-            semver_pat="^v(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)(?:-(?P<prerelease>([1-9]\d*|\d*[a-zA-Z-][0-9a-zA-Z-]*)))$"
+            semver_pat='^v([0-9]+)\.([0-9]+)\.([0-9]+)-([0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$'
           else
-            semver_pat="^v(?P<major>0|[1-9]\d*)\.(?P<minor>0|[1-9]\d*)\.(?P<patch>0|[1-9]\d*)$"
+            semver_pat='^v([0-9]+)\.([0-9]+)\.([0-9]+)$'
           fi
 
           if [[ ! $RELEASE_TAG =~ $semver_regex ]]; then
