@@ -47,7 +47,7 @@ jobs:
             semver_pat='^v([0-9]+)\.([0-9]+)\.([0-9]+)$'
           fi
 
-          if [[ ! $RELEASE_TAG =~ $semver_regex ]]; then
+          if [[ ! $RELEASE_TAG =~ $semver_pat ]]; then
             echo "Invalid version: $RELEASE_TAG"
             exit 1
           fi
