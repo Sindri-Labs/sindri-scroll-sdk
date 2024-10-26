@@ -98,9 +98,7 @@ You can monitor the progress and health of all the services via the command `kub
 > An essential functionality of the coordinator is the validation of proofs that are returned from a prover.
 > For this reason, there are two initial pods (`assets-download` and `parameter-download`) which must pull zkEVM circuit artifact files before the final `coordinator-api` pod starts.
 > You can watch the progress of the first pod with `kubectl logs coordinator-api-0 -c assets-download`.
-> You should see six files in both `verifier/assets/hi` and `verifier/assets/lo` when that download is finished.
 > Similarly, you can watch the progress of the trusted setup download via `kubectl logs coordinator-api-0 -c parameter-download`.
-> This process will take longer as these files are of considerable size (e.g. 8Gb).
 
 ### Accessing Services Locally
 
@@ -132,17 +130,17 @@ kubectl port-forward -n ingress-nginx  --address 0.0.0.0 service/ingress-nginx-c
 You should be able to access the endpoints via your browser.
 [This section](https://scroll-sdk-init.docs.scroll.xyz/en/sdk/guides/devnet-deployment/#web-uis) of the Scroll SDK documentation provides an explanation of all the available dashboards.
 
-## Launching Sindri Provers
+### 🚀 Launching Sindri Provers
+
+...
 
 
-
-### Starting and Stopping Your Devnet
-
-You can stop all services with `make delete` and restart with `make install` (assuming you are still in the `scroll-sdk/devnet` directory).
-However, you may need to remove the volumes created inside of minikube.
-To do this:
-1. list your volumes with `kubectl get pvc`
-2. delete them with `kubectl delete pvc <pvc-name> --force`
+> **Starting and Stopping Your Devnet**<br>
+> You can stop all services with `make delete` and restart with `make install` (assuming you are still in the `scroll-sdk/devnet` directory).
+> However, you may need to remove the volumes created inside of minikube.
+> To do this:
+> 1. list your volumes with `kubectl get pvc`
+> 2. delete them with `kubectl delete pvc <pvc-name> --force`
 
 # Internal Development
 
