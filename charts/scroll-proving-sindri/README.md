@@ -1,14 +1,14 @@
-# scroll-proving-sdk
+# scroll-proving-sindri
 
-![Version: 0.0.5](https://img.shields.io/badge/Version-0.0.5-informational?style=flat-square) ![AppVersion: v0.1.0](https://img.shields.io/badge/AppVersion-v0.1.0-informational?style=flat-square)
+![Version: 0.0.1](https://img.shields.io/badge/Version-0.0.1-informational?style=flat-square)
 
-Example chart for showing how to package a service built using the scroll-proving-sdk library
+Chart for deploying the Sindri proving service for Scroll.
 
 ## Maintainers
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| scroll-tech | <sebastien@scroll.io> |  |
+| sindri-labs |  | <https://github.com/Sindri-Labs/sindri-scroll-sdk> |
 
 ## Requirements
 
@@ -24,19 +24,19 @@ Kubernetes: `>=1.22.0-0`
 |-----|------|---------|-------------|
 | command[0] | string | `"/bin/sh"` |  |
 | command[1] | string | `"-c"` |  |
-| command[2] | string | `"exec cloud --config /sdk_prover/config.json"` |  |
+| command[2] | string | `"exec sindri-scroll-sdk --config /sdk_prover/config.json"` |  |
 | defaultProbes.custom | bool | `true` |  |
 | defaultProbes.enabled | bool | `true` |  |
 | defaultProbes.spec.httpGet.path | string | `"/"` |  |
 | defaultProbes.spec.httpGet.port | int | `80` |  |
-| global.fullnameOverride | string | `"scroll-proving-sdk"` |  |
-| global.nameOverride | string | `"scroll-proving-sdk"` |  |
+| global.fullnameOverride | string | `"scroll-proving-sindri"` |  |
+| global.nameOverride | string | `"scroll-proving-sindri"` |  |
 | image.pullPolicy | string | `"Always"` |  |
-| image.repository | string | `"scrolltech/sdk-cloud-prover"` |  |
-| image.tag | string | `"sindri-v0.0.1"` |  |
+| image.repository | string | `"ghcr.io/sindri-labs/sindri-scroll-sdk/prover"` |  |
+| image.tag | string | `"0.0.5"` |  |
 | persistence.config.enabled | bool | `true` |  |
 | persistence.config.mountPath | string | `"/sdk_prover/"` |  |
-| persistence.config.name | string | `"scroll-proving-sdk-config"` |  |
+| persistence.config.name | string | `"scroll-proving-sindri-config"` |  |
 | persistence.config.type | string | `"configMap"` |  |
 | persistence.keys.accessMode | string | `"ReadWriteOnce"` |  |
 | persistence.keys.enabled | bool | `true` |  |
