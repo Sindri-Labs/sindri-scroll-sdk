@@ -1,0 +1,14 @@
+---
+apiVersion: v2
+description: |
+  Chart for deploying the Sindri proving service for Scroll.
+name: scroll-proving-sindri
+version: 0.0.1
+kubeVersion: ">=1.22.0-0"
+maintainers:
+  - name: sindri-labs
+    url: https://github.com/Sindri-Labs/sindri-scroll-sdk
+dependencies:
+  - name: common
+    repository: "oci://ghcr.io/scroll-tech/scroll-sdk/helm"
+    version: 1.5.1

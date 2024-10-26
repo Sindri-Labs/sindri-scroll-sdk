@@ -1,0 +1,6 @@
+dependencies:
+- name: common
+  repository: oci://ghcr.io/scroll-tech/scroll-sdk/helm
+  version: 1.5.1
+digest: sha256:1ff69e326fd628d3b4b5fa8faa41a899e1f57fde2caf44992c0dd6cd81d1975e
+generated: "2024-10-25T10:17:49.298568-05:00"
