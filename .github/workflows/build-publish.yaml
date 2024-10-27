@@ -1,4 +1,4 @@
-name: Build & Publish Helm
+name: Build & Publish
 
 on:
   release:
