@@ -72,6 +72,11 @@ jobs:
     env:
       RELEASE_VERSION: ${{ needs.versioning.outputs.release_version }}
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
       - name: Chart Info
         id: chart-info
         env:
