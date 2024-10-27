@@ -94,11 +94,12 @@ jobs:
           git add charts/scroll-proving-sindri/Chart.yaml
           git add charts/scroll-proving-sindri/README.md
           git commit -m "Publish for $RELEASE_VERSION"
+          git push
 
       - name: Package & Push Chart
         working-directory: charts
         env:
-          ARTIFACT_NAME: ${{ env.CHART_NAME }}-$RELEASE_VERSION.tgz
+          ARTIFACT_NAME: ${{ env.CHART_NAME }}-${{ env.RELEASE_VERSION }}.tgz
           REGISTRY_NAME: ghcr.io/${{ github.repository }}/helm
         run: |
           helm package ${{ env.CHART_NAME }} --destination .
