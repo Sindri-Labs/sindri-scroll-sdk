@@ -5,7 +5,7 @@ global:
 image:
   repository: ghcr.io/sindri-labs/sindri-scroll-sdk/prover
   pullPolicy: Always
-  tag: v0.0.0-2716e89
+  tag: v0.0.0-d226fd4
 command:
   - "/bin/sh"
   - "-c"
