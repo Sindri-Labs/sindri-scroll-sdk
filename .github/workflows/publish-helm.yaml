@@ -73,7 +73,7 @@ jobs:
 
       - name: Configure Version
         run: |
-          yq e '.version = env(RELEASE_VERSION)' -i Chart.yaml
+          yq e '.version = env(RELEASE_VERSION)' -i charts/${{ env.CHART_NAME }}/Chart.yaml
 
       - name: Build Docs
         run: |
