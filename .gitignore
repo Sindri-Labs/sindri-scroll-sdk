@@ -1,2 +1,8 @@
 /target
 config.json
+
+demo/values/*
+!demo/values/*-demo.yaml
+
+demo/manifests/*
+!demo/manifests/*-demo.yaml
