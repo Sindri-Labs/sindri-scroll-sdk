@@ -5,7 +5,7 @@ global:
 image:
   repository: ghcr.io/sindri-labs/sindri-scroll-sdk/prover
   pullPolicy: Always
-  tag: v0.0.0-d226fd4
+  tag: ""
 command:
   - "/bin/sh"
   - "-c"
@@ -53,6 +53,7 @@ probes:
 # scrollConfig should be overwritten the config in json format. See the example below.
 scrollConfig: |
   {}
+
 #  {
 #   "prover_name_prefix": "sindri_",
 #   "keys_dir": "keys",
