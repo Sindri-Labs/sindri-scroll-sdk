@@ -14,7 +14,7 @@ RUN cargo build --release
 FROM ubuntu:20.04
 
 # Install necessary dependencies
-RUN apt-get update && apt-get install -y libssl-dev && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y libssl-dev openssl ca-certificates && rm -rf /var/lib/apt/lists/*
 
 # Copy the built binary from the builder stage
 COPY --from=builder /usr/src/app/target/release/sindri-scroll-sdk /usr/local/bin/sindri-scroll-sdk
