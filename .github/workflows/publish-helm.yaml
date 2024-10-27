@@ -78,10 +78,10 @@ jobs:
 
       - name: Configure Version
         env:
-          IMAGE_TAG: v${{ env.RELEASE_VERSION }}
+          DOCKER_IMAGE_TAG: v${{ env.RELEASE_VERSION }}
         run: |
           yq e '.version = env(RELEASE_VERSION)' -i charts/${{ env.CHART_NAME }}/Chart.yaml
-          yq e '.image.tag = env(IMAGE_TAG)' -i charts/${{ env.CHART_NAME }}/values.yaml
+          yq e '.image.tag = env(DOCKER_IMAGE_TAG)' -i charts/${{ env.CHART_NAME }}/values.yaml
 
       - name: Build Docs
         run: |
@@ -95,6 +95,7 @@ jobs:
           git config --global user.name "Sindri"
           git config --global user.email "sindri@noreply.com"
           git add charts/scroll-proving-sindri/Chart.yaml
+          git add charts/scroll-proving-sindri/values.yaml
           git add charts/scroll-proving-sindri/README.md
           git commit -m "Publish for $RELEASE_VERSION"
           git push
