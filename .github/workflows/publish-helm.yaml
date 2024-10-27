@@ -62,7 +62,7 @@ jobs:
         run: |
           echo "RELEASE_VERSION=${RELEASE_VERSION}" >> $GITHUB_OUTPUT
 
-  build_publish:
+  build_publish_helm:
     name: Build & Publish Helm
     runs-on: ubuntu-latest
     permissions:
@@ -128,3 +128,39 @@ jobs:
           registry_name="${registry_name,,}"
           helm push $artifact_name oci://$registry_name
           echo "Chart pushed: $artifact_name" >> $GITHUB_STEP_SUMMARY
+
+  build_publish_docker:
+    name: Build & Publish Helm
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    needs: versioning
+    env:
+      RELEASE_VERSION: ${{ needs.versioning.outputs.release_version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3.3.0
+        with:
+          registry: ghcr.io
+          username: github-actions
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure
+        run: |
+          image_name="ghcr.io/${{ github.repository }}/prover"
+          image_name="${image_name,,}"
+          echo "IMAGE_NAME=${image_name}" >> $GITHUB_ENV
+
+      - name: Build Docker image
+        run: |
+          docker build -f docker/Dockerfile -t $IMAGE_NAME:$RELEASE_VERSION .
+
+      - name: Push Docker image
+        run: |
+          docker push $IMAGE_NAME:$RELEASE_VERSION
