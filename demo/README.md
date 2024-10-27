@@ -22,4 +22,7 @@
    When you are prompted for a password provide you Personal Access Token (PAT).
   > note:  This is only needed while the repo is "private"
 
-7. Run deploy.sh
+7. Update deploy.sh with the desired version:
+   `sindri_version="0.0.1"`
+
+8. Run deploy.sh
