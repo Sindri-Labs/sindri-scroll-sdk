@@ -54,7 +54,7 @@ jobs:
           fi
 
           release_version=${RELEASE_TAG#v}
-          echo "RELEASE_VERESION=${release_version}" >> $GITHUB_ENV
+          echo "RELEASE_VERSION=${release_version}" >> $GITHUB_ENV
           echo $release_version
 
       - name: Test Release Version
@@ -63,13 +63,11 @@ jobs:
           COMMIT_SHA: ${{ github.sha }}
         run: |
           release_version="v0.0.0-${COMMIT_SHA:0:7}"
-          echo "RELEASE_VERESION=${release_version}" >> $GITHUB_ENV
+          echo "RELEASE_VERSION=${release_version}" >> $GITHUB_ENV
           echo $release_version
 
       - name: Chart Info
         id: chart-info
-        env:
-          RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
         run: |
           echo "Artifact Name: $CHART_NAME-$RELEASE_VERSION.tgz" >> $GITHUB_STEP_SUMMARY
 
