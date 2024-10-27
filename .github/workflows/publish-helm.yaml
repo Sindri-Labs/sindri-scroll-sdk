@@ -9,16 +9,6 @@ env:
   CHART_NAME: scroll-proving-sindri
 
 jobs:
-  lint_chart:
-    name: Lint Helm Chart
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4.2.2
-
-      - name: Lint Chart
-        run: helm lint charts/scroll-proving-sindri
-
   build_publish:
     name: Build & Publish Helm
     runs-on: ubuntu-latest
@@ -81,14 +71,31 @@ jobs:
         run: |
           echo "Artifact Name: $CHART_NAME-$RELEASE_VERSION.tgz" >> $GITHUB_STEP_SUMMARY
 
-      # - name: Package & Push Chart
-      #   working-directory: charts
-      #   env:
-      #     ARTIFACT_NAME: ${{ steps.chart-info.outputs.artifact_name }}
-      #     REGISTRY_NAME: ${{ steps.chart-info.outputs.registry_name }}
-      #   run: |
-      #     helm dependency update sindri-scroll
-      #     helm package sindri-scroll --destination .
-      #     helm push $ARTIFACT_NAME oci://$REGISTRY_NAME
+      - name: Configure Version
+        run: |
+          yq e '.version = env(RELEASE_VERSION)' -i Chart.yaml
 
-      #     echo "Chart pushed: $ARTIFACT_NAME" >> $GITHUB_STEP_SUMMARY
+      - name: Build Docs
+        run: |
+          helm-docs -g charts/scroll-proving-sindri
+
+      - name: Lint Chart
+        run: helm lint charts/scroll-proving-sindri
+
+      - name: Commit Changes
+        run: |
+          git config --global user.name "Sindri"
+          git config --global user.email "sindri@noreply.com"
+          git add charts/scroll-proving-sindri/Chart.yaml
+          git add charts/scroll-proving-sindri/README.md
+          git commit -m "Publish for $RELEASE_VERSION"
+
+      - name: Package & Push Chart
+        working-directory: charts
+        env:
+          ARTIFACT_NAME: ${{ env.CHART_NAME }}-$RELEASE_VERSION.tgz
+          REGISTRY_NAME: ghcr.io/${{ github.repository }}/helm
+        run: |
+          helm package ${{ env.CHART_NAME }} --destination .
+          helm push $ARTIFACT_NAME oci://$REGISTRY_NAME
+          echo "Chart pushed: $ARTIFACT_NAME" >> $GITHUB_STEP_SUMMARY
