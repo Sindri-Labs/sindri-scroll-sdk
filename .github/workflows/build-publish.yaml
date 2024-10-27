@@ -130,7 +130,7 @@ jobs:
           echo "Chart pushed: $artifact_name" >> $GITHUB_STEP_SUMMARY
 
   build_publish_docker:
-    name: Build & Publish Helm
+    name: Build & Publish Docker
     runs-on: ubuntu-latest
     permissions:
       contents: write
