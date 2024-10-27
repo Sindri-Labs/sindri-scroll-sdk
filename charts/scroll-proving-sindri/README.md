@@ -1,6 +1,6 @@
 # scroll-proving-sindri
 
-![Version: 0.0.0-b71c43e](https://img.shields.io/badge/Version-0.0.0--b71c43e-informational?style=flat-square)
+![Version: 0.0.0-0aff66a](https://img.shields.io/badge/Version-0.0.0--0aff66a-informational?style=flat-square)
 
 Chart for deploying the Sindri proving service for Scroll.
 
@@ -33,7 +33,7 @@ Kubernetes: `>=1.22.0-0`
 | global.nameOverride | string | `"scroll-proving-sindri"` |  |
 | image.pullPolicy | string | `"Always"` |  |
 | image.repository | string | `"ghcr.io/sindri-labs/sindri-scroll-sdk/prover"` |  |
-| image.tag | string | `"0.0.5"` |  |
+| image.tag | string | `"v0.0.0-0aff66a"` |  |
 | persistence.config.enabled | bool | `true` |  |
 | persistence.config.mountPath | string | `"/sdk_prover/"` |  |
 | persistence.config.name | string | `"scroll-proving-sindri-config"` |  |
