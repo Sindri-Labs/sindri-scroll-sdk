@@ -1,6 +1,6 @@
 # Deploy Sindri Provers
 
-This demo builds on the mini-kube deployment of [scroll-sdk](https://scroll-sdk-init.docs.scroll.xyz/en/sdk/guides/devnet-deployment/).
+This demo builds on the minikube deployment of [Scroll SDK](https://scroll-sdk-init.docs.scroll.xyz/en/sdk/guides/devnet-deployment/).
 
 
 ## Prerequisites
