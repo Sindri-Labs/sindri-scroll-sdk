@@ -61,8 +61,12 @@ You should also install `docker`, `kubectl`, `minikube`, `helm`, `node`, and `sc
 
 At this point, you should start `minikube` via
 ```
-minikube start --driver=docker
+minikube start --cpus=12 --memory=32768
+minikube addons enable ingress
+minikube addons enable ingress-dns
 ```
+In the first command, you are allowing the minikube container to use up to 32Gb of RAM (the coordinator pod requires at least 20Gb).
+The following two commands enable external traffic to reach the minikube cluster.
 
 ### Obtaining and Configuring Charts
 
@@ -102,31 +106,19 @@ You can monitor the progress and health of all the services via the command `kub
 
 ### Accessing Services Locally
 
-Your chain is now running, but all of the pods are insulated inside of the minikube cluster.
-To interact with the chain, we need to first enable kubectl to port-forward. 
-The following command allows `kubectl` to bind to ports 80 and 443 (without running the application as root): 
+Now, you should add mappings for the Scroll SDK services to your local DNS resolver by appending the following lines to the end of your `/etc/hosts` file:
 ```bash
-sudo setcap CAP_NET_BIND_SERVICE=+eip $(which kubectl)
+127.0.0.1 frontends.scrollsdk
+127.0.0.1 blockscout.scrollsdk
+127.0.0.1 bridge-history-api.scrollsdk
+127.0.0.1 grafana.scrollsdk
+127.0.0.1 l1-devnet.scrollsdk
+127.0.0.1 l1-explorer.scrollsdk
+127.0.0.1 l2-rpc.scrollsdk
+127.0.0.1 rollup-explorer-backend.scrollsdk
+127.0.0.1 coordinator-api.scrollsdk
 ```
 
-Next, we want to add mappings between the Scroll SDK services and the VM address to our local DNS resolver.
-After looking up the address (by calling `kubectl get ingress` for example), copy that into the codeblock below.
-Then, you should append this to the end of your `/etc/hosts/` file.
-```bash
-<Your Remote VM IP Address> l1-devnet.scrollsdk
-<Your Remote VM IP Address> bridge-history.scrollsdk
-<Your Remote VM IP Address> frontends.scrollsdk
-<Your Remote VM IP Address> grafana.scrollsdk
-<Your Remote VM IP Address> l1-devnet-explorer.scrollsdk
-<Your Remote VM IP Address> l2-rpc.scrollsdk
-<Your Remote VM IP Address> blockscout.scrollsdk
-<Your Remote VM IP Address> bridge-history-api.scrollsdk
-```
-
-Finally, you can begin port forwarding via the following command.
-```bash
-kubectl port-forward -n ingress-nginx  --address 0.0.0.0 service/ingress-nginx-controller 80:80 443:443
-```
 You should be able to access the endpoints via your browser.
 [This section](https://scroll-sdk-init.docs.scroll.xyz/en/sdk/guides/devnet-deployment/#web-uis) of the Scroll SDK documentation provides an explanation of all the available dashboards.
 
