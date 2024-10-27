@@ -70,7 +70,6 @@ The following two commands enable external traffic to reach the minikube cluster
 
 ### Obtaining and Configuring Charts
 
-There is no need to work in this repository, as the guide will be utilizing publicly hosted images and Helm charts.
 However, you will need to clone the Scroll SDK repo and navigate to the `devnet/` directory to access some helper scripts.
 ```bash
 git clone git@github.com:scroll-tech/scroll-sdk.git
@@ -82,7 +81,7 @@ Next we will manually pull and extract the chart for the latest version of Scrol
 make bootstrap
 ```
 > ⚠️ **Encountering Permission Issues?**<br>
-> If you are given any prompts during the execution of the bootstrap command, then there is likely a root vs. user mismatch between configuration shell scripts and the downloaded files.
+> If you are given any prompts during the execution of the bootstrap command or if `make install` does not successfully execute, then there is likely a root vs. user mismatch between configuration shell scripts and the downloaded files.
 > You can solve this by exiting the bootstrap process with `ctrl+c` and running the `config` command separately with `sudo make config`.
 
 
@@ -127,12 +126,9 @@ You should be able to access the endpoints via your browser.
 ...
 
 
-> **Starting and Stopping Your Devnet**<br>
+> 🔄 **Starting and Stopping Your Devnet**<br>
 > You can stop all services with `make delete` and restart with `make install` (assuming you are still in the `scroll-sdk/devnet` directory).
-> However, you may need to remove the volumes created inside of minikube.
-> To do this:
-> 1. list your volumes with `kubectl get pvc`
-> 2. delete them with `kubectl delete pvc <pvc-name> --force`
+> However, you should run `kubectl delete pvc data-l2-rpc-0` after `make delete` to ensure a fresh start.
 
 # Internal Development
 
@@ -158,7 +154,8 @@ You can build the docker image via
 ```bash
 docker build -t sindri-prover -f docker/Dockerfile .
 ```
-You can then use the example docker compose configuration to launch the container via the following command.  Make sure you follow the initial part of the previous section to get your own `config.json` file.
+You can then use the example docker compose configuration to launch the container via the following command.
+Make sure you follow the initial part of the previous section to get your own `config.json` file.
 ```bash
 docker compose --profile=prover up -d
 ```
