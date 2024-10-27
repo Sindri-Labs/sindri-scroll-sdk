@@ -2,17 +2,14 @@
 global:
   nameOverride: &app_name scroll-proving-sindri
   fullnameOverride: *app_name
-
 image:
   repository: ghcr.io/sindri-labs/sindri-scroll-sdk/prover
   pullPolicy: Always
-  tag: 0.0.5
-
+  tag: v0.0.0-2716e89
 command:
   - "/bin/sh"
   - "-c"
   - "exec sindri-scroll-sdk --config /sdk_prover/config.json"
-
 resources:
   requests:
     memory: "100Mi"
@@ -20,7 +17,6 @@ resources:
   limits:
     memory: "500Mi"
     cpu: "100m"
-
 persistence:
   config:
     enabled: true
@@ -33,7 +29,6 @@ persistence:
     mountPath: /keys/
     size: 10Mi
     accessMode: ReadWriteOnce
-
 service:
   main:
     enabled: true
@@ -41,7 +36,6 @@ service:
       http:
         enabled: true
         port: 80
-
 defaultProbes: &default_probes
   enabled: true
   custom: true
@@ -49,19 +43,16 @@ defaultProbes: &default_probes
     httpGet:
       path: "/"
       port: 80
-
 probes:
   liveness:
-    <<: *default_probes
+    !!merge <<: *default_probes
   readiness:
-    <<: *default_probes
+    !!merge <<: *default_probes
   startup:
-    <<: *default_probes
-
+    !!merge <<: *default_probes
 # scrollConfig should be overwritten the config in json format. See the example below.
 scrollConfig: |
   {}
-
 #  {
 #   "prover_name_prefix": "sindri_",
 #   "keys_dir": "keys",
