@@ -19,8 +19,15 @@ cd demo
 
 ## Install Sindri Provers
 
-1. Create copies of the values files found in `values/`
-   - Change the `-demo.yaml` to `-local.yaml`
+Create your own copy of each of the value files found in `values/`.
+These local files will contain your private Sindri API key, but also can be used to fine-tune the behavior of the Sindri provers.
+```bash
+cd values
+cp prover-batch-demo.yaml prover-batch-local.yaml
+cp prover-bundle-demo.yaml prover-bundle-local.yaml
+cp prover-chunk-demo.yaml prover-chunk-local.yaml
+cd ..
+```
 
 2. For each of the 3 values files (`prover-batch-local.yaml`, `prover-chunk-local.yaml`, `prover-bundle-local.yaml`) make the following modifications:
    - Modify `"api_key": "<your-api-key>"` by replacing `<your-api-key>` with your Sindri api key.
