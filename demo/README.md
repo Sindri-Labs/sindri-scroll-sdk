@@ -10,7 +10,11 @@ Here are two easy heuristics to ensure that all pods are healthy and you are rea
 * run `kubectl get pods` and ensure that `coordinator-api-0` has a status of `Running` 
 * run `scrollsdk test ingress` and ensure that all URLs are reachable.
 
-2. Clone the [sindri-scroll-sdk](https://github.com/Sindri-Labs/sindri-scroll-sdk) repository.
+Clone the [sindri-scroll-sdk](https://github.com/Sindri-Labs/sindri-scroll-sdk) repository and navigate to the `demo/` directory.
+```bash
+git clone sindri-scroll-sdk
+cd demo
+```
 
 
 ## Install Sindri Provers
