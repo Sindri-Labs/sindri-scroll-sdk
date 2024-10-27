@@ -43,3 +43,19 @@ Assuming your chain has proving tasks, you can monitor the progress of proof gen
 * https://sindri.app/z/scroll-tech/batch_prover/proofs
 * https://sindri.app/z/scroll-tech/bundle_prover/proofs
 * https://sindri.app/z/scroll-tech/chunk_prover/proofs
+
+## Cleanup
+
+You can remove the provers by uninstalling the deployments.
+This is done with Helm.  
+
+You can list the deployments using `helm list`.  
+You can uninstall a deployment using `helm uninstall <deployment-name>`.  
+
+The following will uninstall the deployments created using the `deploy.sh`.  
+
+```bash
+helm uninstall prover-chunk
+helm uninstall prover-batch
+helm uninstall prover-bundle
+```
