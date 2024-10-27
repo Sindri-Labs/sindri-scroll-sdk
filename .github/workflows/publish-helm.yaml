@@ -98,10 +98,10 @@ jobs:
 
       - name: Package & Push Chart
         working-directory: charts
-        env:
-          REGISTRY_NAME: ghcr.io/${{ github.repository }}/helm
         run: |
           artifact_info=$(helm package ${{ env.CHART_NAME }} --destination .)
           artifact_name=$(echo $artifact_info | cut -d' ' -f8)
-          helm push $artifact_name oci://$REGISTRY_NAME
+          registry_name="ghcr.io/${{ github.repository }}/helm"
+          registry_name="${registry_name,,}"
+          helm push $artifact_name oci://$registry_name
           echo "Chart pushed: $artifact_name" >> $GITHUB_STEP_SUMMARY
