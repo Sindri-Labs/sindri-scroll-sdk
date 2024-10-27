@@ -2,7 +2,7 @@ apiVersion: v2
 description: |
   Chart for deploying the Sindri proving service for Scroll.
 name: scroll-proving-sindri
-version: 0.0.0-2716e89
+version: 0.0.0-d226fd4
 kubeVersion: ">=1.22.0-0"
 maintainers:
   - name: sindri-labs
