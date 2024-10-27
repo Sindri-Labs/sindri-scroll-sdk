@@ -32,7 +32,7 @@ jobs:
           fetch-depth: 0
 
       - name: Branch Check
-        if: ${{ github.event_name == 'release' }}
+        if: ${{ github.event_name == 'release' && github.event.release.prerelease == false }}
         run: |
           if [[ "${{ github.event.release.prerelease }}" == "true" ]]; then
             exit 0
