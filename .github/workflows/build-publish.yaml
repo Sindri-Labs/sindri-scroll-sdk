@@ -23,8 +23,16 @@ jobs:
       - name: Branch Check
         if: ${{ github.event_name == 'release' && github.event.release.prerelease == false }}
         run: |
-          if [[ "$GITHUB_REF_PROTECTED" == 'false' ]]; then
-            echo "Releases can only be created from a protected branch"
+          git fetch origin main
+          git checkout main
+
+          set +e
+          mains=$(git branch --contains $sha | grep -E "(^|\s)main$")
+          set -e
+
+          echo "Mains: $mains"
+          if [ -z "$mains" ]; then
+            echo "Releases can only be created from main"
             exit 1
           fi
 
