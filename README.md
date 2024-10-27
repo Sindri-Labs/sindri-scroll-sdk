@@ -50,6 +50,8 @@ For production deployments, please consult the official [Scroll SDK documentatio
 # Getting Started
 
 While this section primarily reiterates [Scroll's Devnet Guide](https://scroll-sdk-init.docs.scroll.xyz/en/sdk/guides/devnet-deployment/), it includes adjustments specifically for Ubuntu environments.
+This guide also makes revisions to launch the coordinator service which acts as a gateway between the sequencing layer and Sindri provers.
+Since the coordinator requires at least 20Gb of RAM, we recommend you use a machine with at least 32Gb available.
 
 ### Prerequisites
 
@@ -59,24 +61,24 @@ After logging into the [Sindri front-end](https://sindri.app/login), you can cre
 
 You should also install `docker`, `kubectl`, `minikube`, `helm`, `node`, and `scrollsdk` as instructed by the official [Scroll SDK documentation](https://scroll-sdk-init.docs.scroll.xyz/en/sdk/guides/devnet-deployment/#prerequisites).
 
-At this point, you should start `minikube` via
+You should initialize your `minikube` environment via
 ```
 minikube start --cpus=12 --memory=32768
 minikube addons enable ingress
 minikube addons enable ingress-dns
 ```
-In the first command, you are allowing the minikube container to use up to 32Gb of RAM (the coordinator pod requires at least 20Gb).
-The following two commands enable external traffic to reach the minikube cluster.
+In the first command, you are allowing the minikube container to use up to 32Gb of RAM.
+The following two commands enable external traffic to reach the minikube cluster so that you can interact with the chain outside the minikube container.
 
 ### Obtaining and Configuring Charts
 
-However, you will need to clone the Scroll SDK repo and navigate to the `devnet/` directory to access some helper scripts.
+You first need to clone the Scroll SDK repo and navigate to the `devnet/` directory to access some helper scripts.
 ```bash
 git clone git@github.com:scroll-tech/scroll-sdk.git
 cd scroll-sdk/devnet
 ```
 
-Next we will manually pull and extract the chart for the latest version of Scroll SDK.
+This next command manually pulls and extracts the charts for the latest version of Scroll SDK.
 ```bash
 make bootstrap
 ```
@@ -88,7 +90,7 @@ make bootstrap
 ### Installing the Helm Chart
 
 In this step, we will launch the sequencing layer, the coordinator, and various visibility services.
-Because provers require manual configuration, we will start those separately in a later section.
+Because provers require manual configuration, we will start those separately.
 Note that the standard devnet settings do not include any proving layer services, so you will need to add the following two lines to the end of the `install` command in `scroll-sdk/devnet/Makefile`.
 ```bash
     --set coordinator-api.enabled=true \
@@ -123,8 +125,12 @@ You should be able to access the endpoints via your browser.
 
 ### 🚀 Launching Sindri Provers
 
-...
-
+The simplest way to deploy Sindri provers is by following the guide in our [demo directory](demo/README.md).
+Before proceeding to that step, you may find it useful to generate some initial traffic on your chain so that the provers can be sent tasks.
+The following command will automatically produce batches and blocks at regular intervals:
+```bash
+scrollsdk helper activity -o -t
+```
 
 > 🔄 **Starting and Stopping Your Devnet**<br>
 > You can stop all services with `make delete` and restart with `make install` (assuming you are still in the `scroll-sdk/devnet` directory).
