@@ -77,8 +77,11 @@ jobs:
           sudo apt install /tmp/helm-docs.deb
 
       - name: Configure Version
+        env:
+          IMAGE_TAG: v${{ env.RELEASE_VERSION }}
         run: |
           yq e '.version = env(RELEASE_VERSION)' -i charts/${{ env.CHART_NAME }}/Chart.yaml
+          yq e '.image.tag = env(IMAGE_TAG)' -i charts/${{ env.CHART_NAME }}/values.yaml
 
       - name: Build Docs
         run: |
