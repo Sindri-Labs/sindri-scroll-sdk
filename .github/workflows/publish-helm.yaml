@@ -32,8 +32,12 @@ jobs:
           fetch-depth: 0
 
       - name: Branch Check
-        if: ${{ github.event_name == 'release' && github.event.release.prerelease == 'false' }}
+        if: ${{ github.event_name == 'release' }}
         run: |
+          if [[ "${{ github.event.release.prerelease }}" == "true" ]]; then
+            exit 0
+          fi
+
           if [[ "$GITHUB_REF_PROTECTED" == 'true' ]]; then
             echo "Releases can only be created from a protected branch"
             exit 1
