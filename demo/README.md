@@ -18,9 +18,9 @@ This demo builds on the mini-kube deployment of [scroll-sdk](https://scroll-sdk-
 2. For each of the 3 values files (`prover-batch-local.yaml`, `prover-chunk-local.yaml`, `prover-bundle-local.yaml`) make the following modifications:
    - Modify `"api_key": "<your-api-key>"` by replacing `<your-api-key>` with your Sindri api key.
 
-3. Identify the desired version (![GitHub Release](https://img.shields.io/github/v/release/Sindri-Labs/sindri-scroll-sdk?style=flat))
+3. Identify the desired [version](https://github.com/Sindri-Labs/sindri-scroll-sdk/pkgs/container/sindri-scroll-sdk%2Fhelm%2Fscroll-proving-sindri)
 
 4. Run deploy.sh
    ```bash
-   SINDRI_VERSION=v0.0.2 ./deploy.sh
+   SINDRI_VERSION=0.0.2 ./deploy.sh
    ```
