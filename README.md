@@ -144,7 +144,7 @@ To run the prover directly in the terminal, first, create your `config.json` fil
 ```bash
 cp example.config.json config.json
 ```
-Now edit the config to supply your Sindri API key.
+Now edit the `config.json` file to supply your Sindri API key.
 
 Compile and launch the prover via
 ```bash

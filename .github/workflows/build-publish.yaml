@@ -1,0 +1,165 @@
+name: Build & Publish
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch: {}
+
+env:
+  CHART_NAME: scroll-proving-sindri
+
+jobs:
+  versioning:
+    name: Versioning
+    runs-on: ubuntu-latest
+    outputs:
+      release_version: ${{ steps.export-version.outputs.RELEASE_VERSION }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Branch Check
+        if: ${{ github.event_name == 'release' && github.event.release.prerelease == false }}
+        run: |
+          git fetch origin main
+          git checkout main
+
+          set +e
+          mains=$(git branch --contains $sha | grep -E "(^|\s)main$")
+          set -e
+
+          echo "Mains: $mains"
+          if [ -z "$mains" ]; then
+            echo "Releases can only be created from main"
+            exit 1
+          fi
+
+      - name: Release Version
+        if: ${{ github.event_name == 'release' }}
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          IS_PRERELEASE: ${{ github.event.release.prerelease }}
+        run: |
+          if [[ "${IS_PRERELEASE}" == "true" ]]; then
+            semver_pat='^v([0-9]+)\.([0-9]+)\.([0-9]+)-([0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)(\+[0-9A-Za-z-]+(\.[0-9A-Za-z-]+)*)?$'
+          else
+            semver_pat='^v([0-9]+)\.([0-9]+)\.([0-9]+)$'
+          fi
+
+          if [[ ! $RELEASE_TAG =~ $semver_pat ]]; then
+            echo "Invalid version: $RELEASE_TAG"
+            exit 1
+          fi
+
+          echo "RELEASE_VERSION=${RELEASE_TAG}" >> $GITHUB_ENV
+          echo $release_version
+
+      - name: Test Release Version
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        env:
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          release_version="v0.0.0-${COMMIT_SHA:0:7}"
+          echo "RELEASE_VERSION=${release_version}" >> $GITHUB_ENV
+          echo $release_version
+
+      - name: Export Version
+        id: export-version
+        run: |
+          echo "RELEASE_VERSION=${RELEASE_VERSION}" >> $GITHUB_OUTPUT
+
+  build_publish_helm:
+    name: Build & Publish Helm
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    needs: versioning
+    env:
+      RELEASE_VERSION: ${{ needs.versioning.outputs.release_version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Chart Info
+        id: chart-info
+        env:
+          RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
+        run: |
+          echo "CHART_VERSION=${RELEASE_VERSION#v}" >> $GITHUB_ENV
+          echo "Artifact Name: $CHART_NAME-$CHART_VERSION.tgz" >> $GITHUB_STEP_SUMMARY
+
+      - name: Login to GitHub Container Registry
+        env:
+          USERNAME: github-actions
+          PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          helm registry login https://ghcr.io -u $USERNAME -p $PASSWORD
+
+      - name: Install Helm-Docs
+        run: |
+          curl -fsSL -o /tmp/helm-docs.deb https://github.com/norwoodj/helm-docs/releases/download/v1.14.2/helm-docs_1.14.2_Linux_x86_64.deb
+          sudo apt install /tmp/helm-docs.deb
+
+      - name: Configure Version
+        run: |
+          yq e '.version = env(CHART_VERSION)' -i charts/${{ env.CHART_NAME }}/Chart.yaml
+          yq e '.image.tag = env(RELEASE_VERSION)' -i charts/${{ env.CHART_NAME }}/values.yaml
+
+      - name: Build Docs
+        run: |
+          helm-docs -g charts/scroll-proving-sindri
+
+      - name: Lint Chart
+        run: helm lint charts/scroll-proving-sindri
+
+      - name: Package & Push Chart
+        working-directory: charts
+        run: |
+          artifact_info=$(helm package ${{ env.CHART_NAME }} --destination .)
+          artifact_name=$(echo $artifact_info | cut -d' ' -f8)
+          registry_name="ghcr.io/${{ github.repository }}/helm"
+          registry_name="${registry_name,,}"
+          helm push $artifact_name oci://$registry_name
+
+  build_publish_docker:
+    name: Build & Publish Docker
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    needs:
+      - versioning
+      - build_publish_helm
+    env:
+      RELEASE_VERSION: ${{ needs.versioning.outputs.release_version }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+        with:
+          fetch-depth: 0
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3.3.0
+        with:
+          registry: ghcr.io
+          username: github-actions
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure
+        run: |
+          image_name="ghcr.io/${{ github.repository }}/prover"
+          image_name="${image_name,,}"
+          echo "IMAGE_NAME=${image_name}" >> $GITHUB_ENV
+
+      - name: Build Docker image
+        run: |
+          docker build -f docker/Dockerfile -t $IMAGE_NAME:$RELEASE_VERSION .
+
+      - name: Push Docker image
+        run: |
+          docker push $IMAGE_NAME:$RELEASE_VERSION
