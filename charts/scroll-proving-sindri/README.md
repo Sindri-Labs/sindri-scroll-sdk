@@ -1,6 +1,6 @@
 # scroll-proving-sindri
 
-![Version: 0.0.1](https://img.shields.io/badge/Version-0.0.1-informational?style=flat-square)
+![Version: v0.0.0-9d2e85f](https://img.shields.io/badge/Version-v0.0.0--9d2e85f-informational?style=flat-square)
 
 Chart for deploying the Sindri proving service for Scroll.
 
@@ -8,7 +8,7 @@ Chart for deploying the Sindri proving service for Scroll.
 
 | Name | Email | Url |
 | ---- | ------ | --- |
-| sindri-labss |  | <https://github.com/Sindri-Labs/sindri-scroll-sdk> |
+| sindri-labs |  | <https://github.com/Sindri-Labs/sindri-scroll-sdk> |
 
 ## Requirements
 
