@@ -60,7 +60,7 @@ jobs:
       - name: Export Version
         id: export-version
         run: |
-          echo "RELEASE_VERSION=${release_version}" >> $GITHUB_OUTPUT
+          echo "RELEASE_VERSION=${GITHUB_OUTPUT}" >> $GITHUB_OUTPUT
 
   build_publish:
     name: Build & Publish Helm
