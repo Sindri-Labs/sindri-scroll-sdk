@@ -34,7 +34,12 @@ For each of the three values files (`prover-batch-local.yaml`, `prover-chunk-loc
 Identify the desired [version](https://github.com/Sindri-Labs/sindri-scroll-sdk/pkgs/container/sindri-scroll-sdk%2Fhelm%2Fscroll-proving-sindri).
 Generally, the latest stable release is safe to use with the latest Scroll SDK coordinator.
 
-4. Run deploy.sh
+Now, you can launch all Scroll zkEVM proving services with one command via 
    ```bash
    SINDRI_VERSION=0.0.2 ./deploy.sh
    ```
+Running `kubectl get pods` should reveal three new services, one for each circuit type.
+Assuming your chain has proving tasks, you can monitor the progress of proof generation either via the logs of any prover pod or via Sindri's web front-end after logging in:
+* https://sindri.app/z/scroll-tech/batch_prover/proofs
+* https://sindri.app/z/scroll-tech/bundle_prover/proofs
+* https://sindri.app/z/scroll-tech/chunk_prover/proofs
