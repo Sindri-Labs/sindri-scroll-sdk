@@ -29,13 +29,6 @@ jobs:
             exit 1
           fi
 
-      - name: Login to GitHub Container Registry
-        env:
-          USERNAME: github-actions
-          PASSWORD: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          helm registry login https://ghcr.io -u $USERNAME -p $PASSWORD
-
       - name: Release Version
         if: ${{ github.event_name == 'release' }}
         env:
@@ -70,6 +63,18 @@ jobs:
         id: chart-info
         run: |
           echo "Artifact Name: $CHART_NAME-$RELEASE_VERSION.tgz" >> $GITHUB_STEP_SUMMARY
+
+      - name: Login to GitHub Container Registry
+        env:
+          USERNAME: github-actions
+          PASSWORD: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          helm registry login https://ghcr.io -u $USERNAME -p $PASSWORD
+
+      - name: Install Helm-Docs
+        run: |
+          curl -fsSL -o /tmp/helm-docs.deb https://github.com/norwoodj/helm-docs/releases/download/v1.14.2/helm-docs_1.14.2_Linux_x86_64.deb
+          apt install /tmp/helm-docs.deb
 
       - name: Configure Version
         run: |
