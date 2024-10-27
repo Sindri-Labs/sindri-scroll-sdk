@@ -2,9 +2,6 @@ global:
   nameOverride: &app_name prover-batch
   fullnameOverride: *app_name
 
-imagePullSecrets:
-- name: regcred
-
 persistence:
   config:
     enabled: true
