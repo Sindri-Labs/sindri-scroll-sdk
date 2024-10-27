@@ -31,7 +31,8 @@ cd ..
 
 For each of the three values files (`prover-batch-local.yaml`, `prover-chunk-local.yaml`, `prover-bundle-local.yaml`) you should now modify the `"api_key"` field, replacing `<your-api-key>` with your [Sindri api key](https://sindri.app/z/me/page/settings/api-keys).
 
-3. Identify the desired [version](https://github.com/Sindri-Labs/sindri-scroll-sdk/pkgs/container/sindri-scroll-sdk%2Fhelm%2Fscroll-proving-sindri)
+Identify the desired [version](https://github.com/Sindri-Labs/sindri-scroll-sdk/pkgs/container/sindri-scroll-sdk%2Fhelm%2Fscroll-proving-sindri).
+Generally, the latest stable release is safe to use with the latest Scroll SDK coordinator.
 
 4. Run deploy.sh
    ```bash
