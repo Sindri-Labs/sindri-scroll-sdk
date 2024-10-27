@@ -9,12 +9,11 @@ env:
   CHART_NAME: scroll-proving-sindri
 
 jobs:
-  build_publish:
+  versioning:
     name: Build & Publish Helm
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
+    outputs:
+      release_version: ${{ steps.export-version.outputs.RELEASE_VERSION }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
@@ -46,8 +45,7 @@ jobs:
             exit 1
           fi
 
-          release_version=${RELEASE_TAG#v}
-          echo "RELEASE_VERSION=${release_version}" >> $GITHUB_ENV
+          echo "RELEASE_VERSION=${RELEASE_TAG}" >> $GITHUB_ENV
           echo $release_version
 
       - name: Test Release Version
@@ -55,14 +53,30 @@ jobs:
         env:
           COMMIT_SHA: ${{ github.sha }}
         run: |
-          release_version="0.0.0-${COMMIT_SHA:0:7}"
+          release_version="v0.0.0-${COMMIT_SHA:0:7}"
           echo "RELEASE_VERSION=${release_version}" >> $GITHUB_ENV
           echo $release_version
 
+      - name: Export Version
+        id: export-version
+        run: |
+          echo "RELEASE_VERSION=${release_version}" >> $GITHUB_OUTPUT
+
+  build_publish:
+    name: Build & Publish Helm
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      packages: write
+    needs: versioning
+    env:
+      RELEASE_VERSION: ${{ needs.versioning.outputs.release_version }}
+    steps:
       - name: Chart Info
         id: chart-info
         run: |
-          echo "Artifact Name: $CHART_NAME-$RELEASE_VERSION.tgz" >> $GITHUB_STEP_SUMMARY
+          echo "CHART_VERSION=${RELEASE_VERSION#v}" >> $GITHUB_ENV
+          echo "Artifact Name: $CHART_NAME-$CHART_VERSION.tgz" >> $GITHUB_STEP_SUMMARY
 
       - name: Login to GitHub Container Registry
         env:
@@ -77,11 +91,9 @@ jobs:
           sudo apt install /tmp/helm-docs.deb
 
       - name: Configure Version
-        env:
-          DOCKER_IMAGE_TAG: v${{ env.RELEASE_VERSION }}
         run: |
-          yq e '.version = env(RELEASE_VERSION)' -i charts/${{ env.CHART_NAME }}/Chart.yaml
-          yq e '.image.tag = env(DOCKER_IMAGE_TAG)' -i charts/${{ env.CHART_NAME }}/values.yaml
+          yq e '.version = env(CHART_VERSION)' -i charts/${{ env.CHART_NAME }}/Chart.yaml
+          yq e '.image.tag = env(RELEASE_VERSION)' -i charts/${{ env.CHART_NAME }}/values.yaml
 
       - name: Build Docs
         run: |
@@ -97,7 +109,7 @@ jobs:
           git add charts/scroll-proving-sindri/Chart.yaml
           git add charts/scroll-proving-sindri/values.yaml
           git add charts/scroll-proving-sindri/README.md
-          git commit -m "Publish for $RELEASE_VERSION"
+          git commit -m "Publish for $CHART_VERSION"
           git push
 
       - name: Package & Push Chart
