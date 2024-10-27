@@ -135,7 +135,9 @@ jobs:
     permissions:
       contents: write
       packages: write
-    needs: versioning
+    needs:
+      - versioning
+      - build_publish_helm
     env:
       RELEASE_VERSION: ${{ needs.versioning.outputs.release_version }}
     steps:
