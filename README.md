@@ -132,9 +132,11 @@ The following command will automatically produce batches and blocks at regular i
 scrollsdk helper activity -o -t
 ```
 
-> 🔄 **Starting and Stopping Your Devnet**<br>
-> You can stop all services with `make delete` and restart with `make install` (assuming you are still in the `scroll-sdk/devnet` directory).
-> However, you should run `kubectl delete pvc data-l2-rpc-0` after `make delete` to ensure a fresh start.
+### Cleanup 
+
+You can stop all services with `make delete` and restart with `make install` (assuming you are still in the `scroll-sdk/devnet` directory).
+However, you should run `kubectl delete pvc data-l2-rpc-0` after `make delete` to ensure a fresh start.
+
 
 # Internal Development
 
