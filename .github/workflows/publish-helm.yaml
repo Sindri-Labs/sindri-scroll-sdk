@@ -68,6 +68,8 @@ jobs:
 
       - name: Chart Info
         id: chart-info
+        env:
+          RELEASE_VERSION: ${{ env.RELEASE_VERSION }}
         run: |
           echo "Artifact Name: $CHART_NAME-$RELEASE_VERSION.tgz" >> $GITHUB_STEP_SUMMARY
 
