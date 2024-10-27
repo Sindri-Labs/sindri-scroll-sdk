@@ -28,6 +28,14 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Branch Check
+        if: ${{ github.event_name == 'release' && github.event.release.prerelease == 'false' }}
+        run: |
+          if [[ "$GITHUB_REF_PROTECTED" == 'true' ]]; then
+            echo "Releases can only be created from a protected branch"
+            exit 1
+          fi
+
       - name: Login to GitHub Container Registry
         env:
           USERNAME: github-actions
@@ -53,6 +61,15 @@ jobs:
           fi
 
           release_version=${RELEASE_TAG#v}
+          echo "RELEASE_VERESION=${release_version}" >> $GITHUB_ENV
+          echo $release_version
+
+      - name: Release Version
+        if: ${{ github.event_name == 'workflow_dispatch' }}
+        env:
+          COMMIT_SHA: ${{ github.sha }}
+        run: |
+          release_version="v0.0.0-${COMMIT_SHA:0:7}"
           echo "RELEASE_VERESION=${release_version}" >> $GITHUB_ENV
           echo $release_version
 
