@@ -1,6 +1,6 @@
 # scroll-proving-sindri
 
-![Version: 0.0.0-1b7a0c3](https://img.shields.io/badge/Version-0.0.0--1b7a0c3-informational?style=flat-square)
+![Version: 0.0.0-eddf721](https://img.shields.io/badge/Version-0.0.0--eddf721-informational?style=flat-square)
 
 Chart for deploying the Sindri proving service for Scroll.
 
