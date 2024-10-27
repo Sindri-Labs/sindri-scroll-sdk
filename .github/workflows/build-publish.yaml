@@ -117,7 +117,6 @@ jobs:
           registry_name="ghcr.io/${{ github.repository }}/helm"
           registry_name="${registry_name,,}"
           helm push $artifact_name oci://$registry_name
-          echo "Chart pushed: $artifact_name" >> $GITHUB_STEP_SUMMARY
 
   build_publish_docker:
     name: Build & Publish Docker
