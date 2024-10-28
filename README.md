@@ -3,7 +3,7 @@
 
 <img src="./media/sindri-gradient-logo.webp" height="160" align="right"/>
 
-#### [Sindri Sign Up](https://sindri.app/signup) | [Scroll SDK Docs](https://scroll-sdk-init.docs.scroll.xyz/en/sdk/) | [Getting Started](#getting-started) | [Development](#development)
+#### [Sindri Sign Up](https://sindri.app/signup) | [Scroll SDK Docs](https://scroll-sdk-init.docs.scroll.xyz/en/sdk/) | [Getting Started](#getting-started) | [Development](#internal-development)
 
 Sindri provides automated ZK proving infrastructure, empowering hundreds of teams — including leading Layer 2s and rollups — to launch in minutes instead of months.
 Through our API, developers can seamlessly integrate verifiable computation, reducing time to market, cutting costs, and scaling faster.
