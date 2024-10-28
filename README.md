@@ -9,7 +9,7 @@ Sindri provides automated ZK proving infrastructure, empowering hundreds of team
 Through the Sindri API, developers can seamlessly integrate verifiable computation, reducing time to market, cutting costs, and scaling faster.
 Sindri makes zero-knowledge infrastructure simple and accessible, facilitating automation within the most hardware-intensive layer of the ZK app deployment stack.
 
-This repository hosts the images and Helm charts designed to perform proof generation for a Scroll SDK chain.
+This repository hosts a proving application image and Helm chart which will route all zkEVM proof generation to the Sindri platform for a Scroll SDK chain.
 The following diagram depicts how the Scroll SDK components work together when you use Sindri as a prover.
 ```mermaid
 ---
