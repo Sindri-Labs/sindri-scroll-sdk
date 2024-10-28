@@ -67,7 +67,7 @@ minikube start --cpus=12 --memory=32768
 minikube addons enable ingress
 minikube addons enable ingress-dns
 ```
-In the first command, you are allowing the minikube container to use up to 32Gb of RAM.
+In the first command, you are allowing the minikube container to use up to 32 GB of RAM.
 The following two commands enable external traffic to reach the minikube cluster so that you can interact with the chain outside the minikube container.
 
 ### Obtaining and Configuring Charts
