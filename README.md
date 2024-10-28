@@ -93,8 +93,16 @@ In this step, we will launch the sequencing layer, the coordinator, and various 
 Because provers require manual configuration, we will start these services separately.
 Note that the standard devnet settings do not include any proving layer services, so you will need to add the following two lines to the end of the `install` command in `scroll-sdk/devnet/Makefile`.
 ```bash
-    --set coordinator-api.enabled=true \
-    --set coordinator-cron.enabled=true
+install: # The relevant section in the Makefile
+		helm upgrade -i scroll-sdk scroll-sdk -n $(NAMESPACE) \
+			--set l2-rpc.image.tag=$(L2_IMAGE_TAG) \
+			--set l2-sequencer.image.tag=$(L2_IMAGE_TAG) \
+            # Omitted rows ...
+            --values scroll-sdk/scroll-common-config.yaml \
+            --values scroll-sdk/scroll-common-config-contracts.yaml \ 
+            # Add the following two rows
+            --set coordinator-api.enabled=true \
+            --set coordinator-cron.enabled=true
 ```
 After that adjustment, you can start the chain by entering the following command in your terminal:
 ```bash
