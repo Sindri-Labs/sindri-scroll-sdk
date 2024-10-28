@@ -61,7 +61,7 @@ After logging into the [Sindri front-end](https://sindri.app/login), you can cre
 
 You should also install `docker`, `kubectl`, `minikube`, `helm`, `node`, and `scrollsdk` as instructed by the official [Scroll SDK documentation](https://scroll-sdk-init.docs.scroll.xyz/en/sdk/guides/devnet-deployment/#prerequisites).
 
-You should initialize your `minikube` environment via
+You should initialize your `minikube` environment with three commands:
 ```bash
 minikube start --cpus=12 --memory=32768
 minikube addons enable ingress
