@@ -56,7 +56,7 @@ Since the coordinator requires at least 20 GB of RAM, we recommend you use a mac
 ### Prerequisites
 
 You will need to obtain an API key to use Sindri.
-If you have not already created an account, follow the sign up link posted at the top left of this README.
+If you have not already created an account, you can do so by visiting the [Sindri sign up page](https://sindri.app/signup).
 After logging into the [Sindri front-end](https://sindri.app/login), you can create and manage your API Keys within the [API Keys Settings page](https://sindri.app/z/me/page/settings/api-keys).
 
 You should also install `docker`, `kubectl`, `minikube`, `helm`, `node`, and `scrollsdk` as instructed by the official [Scroll SDK documentation](https://scroll-sdk-init.docs.scroll.xyz/en/sdk/guides/devnet-deployment/#prerequisites).
