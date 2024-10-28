@@ -51,7 +51,7 @@ For production deployments, please consult the official [Scroll SDK documentatio
 
 While this section primarily reiterates [Scroll's Devnet Guide](https://scroll-sdk-init.docs.scroll.xyz/en/sdk/guides/devnet-deployment/), it includes adjustments specifically for Ubuntu environments.
 This guide also makes revisions to launch the coordinator service which acts as a gateway between the sequencing layer and Sindri provers.
-Since the coordinator requires at least 20Gb of RAM, we recommend you use a machine with at least 32Gb available.
+Since the coordinator requires at least 20 GB of RAM, we recommend you use a machine with at least 32 GB available.
 
 ### Prerequisites
 
