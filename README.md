@@ -125,7 +125,7 @@ You should be able to access the endpoints via your browser.
 
 ### 🚀 Launching Sindri Provers
 
-The simplest way to deploy Sindri provers is by following the guide in our [demo directory](demo/README.md).
+The simplest way to deploy Sindri provers is by following the [Deploy Sindri Provers](demo/README.md) guide helpfully included in the "demo" directory.
 Before proceeding to that step, you may find it useful to generate some initial traffic on your chain so that the provers can be sent tasks.
 The following command will automatically produce batches and blocks at regular intervals.
 Before entering the command, ensure that you are in the `scroll-sdk/devnet/scroll-sdk` directory.
