@@ -96,8 +96,13 @@ Note that the standard devnet settings do not include any proving layer services
     --set coordinator-api.enabled=true \
     --set coordinator-cron.enabled=true
 ```
-After that adjustment, enter `make install` in your terminal to start the chain.
+After that adjustment, you can start the chain by entering the following command in your terminal:
+```bash
+make install
+```
+The initialization of all the services associated with your chain can take multiple minutes.
 You can monitor the progress and health of all the services via the command `kubectl get pods`.
+Once each row in the output of `kubectl get pods` depicts a status of "Ready", your chain is fully operational.
 
 > 🕒 **Waiting on the coordinator?**<br>
 > An essential functionality of the coordinator is the validation of proofs that are returned from a prover.
