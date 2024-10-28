@@ -29,13 +29,15 @@ persistence:
     mountPath: /keys/
     size: 10Mi
     accessMode: ReadWriteOnce
+
 service:
   main:
-    enabled: true
+    enabled: false
     ports:
       http:
         enabled: true
         port: 80
+
 defaultProbes: &default_probes
   enabled: true
   custom: true
@@ -43,13 +45,9 @@ defaultProbes: &default_probes
     httpGet:
       path: "/"
       port: 80
-probes:
-  liveness:
-    !!merge <<: *default_probes
-  readiness:
-    !!merge <<: *default_probes
-  startup:
-    !!merge <<: *default_probes
+
+probes: null
+
 # scrollConfig should be overwritten the config in json format. See the example below.
 scrollConfig: |
   {}
