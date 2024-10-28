@@ -127,7 +127,8 @@ You should be able to access the endpoints via your browser.
 
 The simplest way to deploy Sindri provers is by following the guide in our [demo directory](demo/README.md).
 Before proceeding to that step, you may find it useful to generate some initial traffic on your chain so that the provers can be sent tasks.
-The following command will automatically produce batches and blocks at regular intervals:
+The following command will automatically produce batches and blocks at regular intervals.
+Before entering the command, ensure that you are in the `scroll-sdk/devnet/scroll-sdk` directory.
 ```bash
 scrollsdk helper activity -o -t
 ```
