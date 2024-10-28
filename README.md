@@ -90,7 +90,7 @@ make bootstrap
 ### Installing the Helm Chart
 
 In this step, we will launch the sequencing layer, the coordinator, and various visibility services.
-Because provers require manual configuration, we will start those separately.
+Because provers require manual configuration, we will start these services separately.
 Note that the standard devnet settings do not include any proving layer services, so you will need to add the following two lines to the end of the `install` command in `scroll-sdk/devnet/Makefile`.
 ```bash
     --set coordinator-api.enabled=true \
