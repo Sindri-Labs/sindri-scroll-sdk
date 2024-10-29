@@ -1,3 +1,7 @@
+//! sindri-scroll-sdk
+//!
+//! This program connects the Sindri proving service to the Scroll proving SDK.
+//!
 use async_trait::async_trait;
 use clap::Parser;
 use core::time::Duration;
@@ -42,6 +46,7 @@ struct VerificationKey {
     verification_key: String,
 }
 
+#[allow(dead_code)]
 #[derive(Deserialize)]
 struct SindriTaskStatusResponse {
     pub proof_id: String,
@@ -94,8 +99,6 @@ fn reformat_vk(vk_old: String) -> anyhow::Result<String> {
     // encode with padding
     let vk_new = base64::encode_config(vk, base64::STANDARD);
 
-    log::debug!("vk_new: {:?}", vk_new);
-
     Ok(vk_new)
 }
 
@@ -105,6 +108,11 @@ impl ProvingService for CloudProver {
         false
     }
 
+    // There are three steps to prove a circuit:
+    // 1. Get the verification key from the Sindri proving service.
+    // 2. Submit a proof to the Sindri proving service.
+    // 3. Query the status of the proof task.
+
     async fn get_vk(&self, req: GetVkRequest) -> GetVkResponse {
         if req.circuit_version != THIS_CIRCUIT_VERSION {
             return GetVkResponse {
@@ -113,6 +121,7 @@ impl ProvingService for CloudProver {
             };
         };
 
+        #[allow(dead_code)]
         #[derive(serde::Deserialize)]
         struct SindriGetDetailResponse {
             circuit_id: String,
