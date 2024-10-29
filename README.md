@@ -99,6 +99,7 @@ Note that the standard devnet settings do not include any proving layer services
              --set coordinator-api.enabled=true \
              --set coordinator-cron.enabled=true \
              ...
+```
 After that adjustment, you can start the chain by entering the following command in your terminal:
 ```bash
 make install
