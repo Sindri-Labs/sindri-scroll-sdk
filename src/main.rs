@@ -297,7 +297,7 @@ impl CloudProver {
         let api_url = base_url.join(SINDRI_API_PATH).expect("cannot parse cloud prover api_url");
 
         Self {
-            api_url,
+            base_url: api_url,
             api_key: cfg.api_key,
             send_timeout: Duration::from_secs(cfg.connection_timeout_sec),
             client,
