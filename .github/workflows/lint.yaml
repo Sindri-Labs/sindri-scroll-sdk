@@ -1,0 +1,25 @@
+name: Lint Codebase
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    # Do not run on draft pull requests
+    types:
+    - opened
+    - reopened
+    - synchronize
+    - ready_for_review
+
+jobs:
+  run-lint:
+    runs-on: ubuntu-latest
+    # Do not run on draft pull requests
+    if: ${{ github.event_name == 'push' || !github.event.pull_request.draft }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Run Clippy
+        run: cargo clippy --all-targets --all-features    
