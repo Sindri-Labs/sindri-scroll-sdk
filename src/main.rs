@@ -288,6 +288,10 @@ fn reprocess_prove_input(req: &ProveRequest) -> anyhow::Result<String> {
 // alternatively, we can just read it from the config
 const THIS_CIRCUIT_VERSION: &str = "v0.13.1";
 
+// Sindri API client path. This is the base path for all
+// Sindri API calls in this version of the Sindri Scroll SDK.
+const SINDRI_API_PATH: &str = "/api/v1/";
+
 impl CloudProver {
     pub fn new(cfg: CloudProverConfig) -> Self {
         let retry_wait_duration = Duration::from_secs(cfg.retry_wait_time_sec);
@@ -299,9 +303,10 @@ impl CloudProver {
             .build();
 
         let base_url = Url::parse(&cfg.base_url).expect("cannot parse cloud prover base_url");
+        let api_url = base_url.join(SINDRI_API_PATH).expect("cannot parse cloud prover api_url");
 
         Self {
-            base_url,
+            base_url: api_url,
             api_key: cfg.api_key,
             send_timeout: Duration::from_secs(cfg.connection_timeout_sec),
             client,
