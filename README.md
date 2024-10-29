@@ -1,6 +1,6 @@
 # Sindri Provers for Scroll SDK
 
-[![Build](https://img.shields.io/github/actions/workflow/status/Sindri-Labs/sindri-scroll-sdk/ci.yaml?style=for-the-badge)](https://github.com/Sindri-Labs/sindri-scroll-sdk/actions)
+[![Build](https://img.shields.io/github/actions/workflow/status/Sindri-Labs/sindri-scroll-sdk/ci.yaml)](https://github.com/Sindri-Labs/sindri-scroll-sdk/actions)
 [![License](https://img.shields.io/github/license/Sindri-Labs/sindri-scroll-sdk)](https://img.shields.io/github/license/Sindri-Labs/sindri-scroll-sdk?style=for-the-badge)
 
 <img src="./media/sindri-gradient-logo.webp" height="160" align="right"/>
