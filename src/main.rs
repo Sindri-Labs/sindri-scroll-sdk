@@ -1,3 +1,7 @@
+//! sindri-scroll-sdk
+//!
+//! This program connects the Sindri proving service to the Scroll proving SDK.
+//!
 use async_trait::async_trait;
 use clap::Parser;
 use core::time::Duration;
@@ -43,17 +47,12 @@ struct VerificationKey {
 }
 
 #[derive(Deserialize)]
-struct SindriTaskStatusResponse {
+struct SindriProofInfoResponse {
     pub proof_id: String,
-    pub project_name: String,
-    pub perform_verify: bool,
     pub status: SindriTaskStatus,
     pub compute_time_sec: Option<f64>,
-    pub queue_time_sec: Option<f64>,
     pub verification_key: Option<VerificationKey>,
     pub proof: Option<serde_json::Value>,
-    pub public: Option<serde_json::Value>,
-    pub warnings: Option<Vec<String>>,
     pub error: Option<String>,
 }
 
@@ -94,8 +93,6 @@ fn reformat_vk(vk_old: String) -> anyhow::Result<String> {
     // encode with padding
     let vk_new = base64::encode_config(vk, base64::STANDARD);
 
-    log::debug!("vk_new: {:?}", vk_new);
-
     Ok(vk_new)
 }
 
@@ -104,6 +101,11 @@ impl ProvingService for CloudProver {
     fn is_local(&self) -> bool {
         false
     }
+
+    // There are three steps to prove a circuit:
+    // 1. Get the verification key from the Sindri proving service.
+    // 2. Submit a proof to the Sindri proving service.
+    // 3. Query the status of the proof task.
 
     async fn get_vk(&self, req: GetVkRequest) -> GetVkResponse {
         if req.circuit_version != THIS_CIRCUIT_VERSION {
@@ -114,14 +116,12 @@ impl ProvingService for CloudProver {
         };
 
         #[derive(serde::Deserialize)]
-        struct SindriGetDetailResponse {
-            circuit_id: String,
-            circuit_name: String,
+        struct SindriCircuitInfoResponse {
             verification_key: VerificationKey,
         }
 
         match self
-            .get_with_token::<SindriGetDetailResponse>(
+            .get_with_token::<SindriCircuitInfoResponse>(
                 MethodClass::Circuit(req.circuit_type),
                 "detail",
                 None,
@@ -164,7 +164,7 @@ impl ProvingService for CloudProver {
         };
 
         match self
-            .post_with_token::<SindriProveRequest, SindriTaskStatusResponse>(
+            .post_with_token::<SindriProveRequest, SindriProofInfoResponse>(
                 MethodClass::Circuit(req.circuit_type),
                 "prove",
                 &sindri_req,
@@ -203,7 +203,7 @@ impl ProvingService for CloudProver {
         .collect();
 
         match self
-            .get_with_token::<SindriTaskStatusResponse>(
+            .get_with_token::<SindriProofInfoResponse>(
                 MethodClass::Proof(req.task_id.clone()),
                 "detail",
                 Some(query_params),
