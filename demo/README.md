@@ -1,11 +1,11 @@
 # Deploy Sindri Provers
 
-This demo builds on the minikube deployment of [Scroll SDK](https://scroll-sdk-init.docs.scroll.xyz/en/sdk/guides/devnet-deployment/).
+This demo builds on the minikube deployment of [Scroll SDK](https://docs.scroll.xyz/en/sdk/guides/devnet-deployment/).
 
 
 ## Prerequisites
 
-Before you attempt to launch the proving layers make sure that you have already completed the deployment of all other services in [Scroll SDK](https://scroll-sdk-init.docs.scroll.xyz/en/sdk/guides/devnet-deployment/) using minikube.
+Before you attempt to launch the proving layers make sure that you have already completed the deployment of all other services in [Scroll SDK](https://docs.scroll.xyz/en/sdk/guides/devnet-deployment/) using minikube.
 Here are two easy heuristics to ensure that all pods are healthy and you are ready to launch the provers:
 * run `kubectl get pods` and ensure that `coordinator-api-0` has a status of `Running` 
 * run `scrollsdk test ingress` and ensure that all URLs are reachable.
