@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 
-if [ -z "$SINDRI_VERSION" ]; then
-  echo "Error: SINDRI_VERSION environment variable is not set or is empty."
-  exit 1
-fi
+# if [ -z "0.0.0-6dbfb8c" ]; then
+#   echo "Error: SINDRI_VERSION environment variable is not set or is empty."
+#   exit 1
+# fi
 
-sindri_version=$SINDRI_VERSION
+sindri_version=0.0.0-6dbfb8c
+
+# Sindri version 0.0.0-6dbfb8c
 
 helm upgrade -i prover-chunk oci://ghcr.io/sindri-labs/sindri-scroll-sdk/helm/scroll-proving-sindri -n default \
 --version=$sindri_version \

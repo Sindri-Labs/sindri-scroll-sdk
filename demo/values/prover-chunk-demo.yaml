@@ -28,7 +28,7 @@ scrollConfig: |
         "n_workers": 1,
         "cloud": {
           "base_url": "https://sindri.app/api/v1/",
-          "api_key": "<your-api-key>",
+          "api_key": "sindri_8tJAh4D4g6btfREdfwkeHNdhZpn4e7ks_00yi",
           "retry_count": 3,
           "retry_wait_time_sec": 5,
           "connection_timeout_sec": 60
