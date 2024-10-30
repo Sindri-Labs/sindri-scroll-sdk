@@ -115,7 +115,6 @@ impl ProvingService for CloudProver {
             };
         };
 
-        #[allow(dead_code)]
         #[derive(serde::Deserialize)]
         struct SindriCircuitInfoResponse {
             verification_key: VerificationKey,
