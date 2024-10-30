@@ -47,11 +47,11 @@ flowchart LR
 
 For more information about the Sindri platform, please check out [sindri.app](https://sindri.app/).
 The next section ([Getting Started](#getting-started)) shows how to launch a local Scroll SDK devote with provers running on Sindri.
-For production deployments, please consult the official [Scroll SDK documentation](https://docs.scroll.xyz/en/sdk/guides/production-deployment/).
+For production deployments, please consult the official [Scroll SDK documentation](https://docs.scroll.io/en/sdk/guides/production-deployment/).
 
 # Getting Started
 
-While this section primarily reiterates [Scroll's Devnet Guide](https://docs.scroll.xyz/en/sdk/guides/devnet-deployment/), it includes adjustments specifically for Ubuntu environments.
+While this section primarily reiterates [Scroll's Devnet Guide](https://docs.scroll.io/en/sdk/guides/devnet-deployment/), it includes adjustments specifically for Ubuntu environments.
 This guide also makes revisions to launch the coordinator service which acts as a gateway between the sequencing layer and Sindri provers.
 Since the coordinator requires at least 20 GB of RAM, we recommend you use a machine with at least 32 GB available.
 
@@ -61,7 +61,7 @@ You will need to obtain an API key to use Sindri.
 If you have not already created an account, you can do so by visiting the [Sindri sign up page](https://sindri.app/signup).
 After logging into the [Sindri front-end](https://sindri.app/login), you can create and manage your API Keys within the [API Keys Settings page](https://sindri.app/z/me/page/settings/api-keys).
 
-You should also install `docker`, `kubectl`, `minikube`, `helm`, `node`, and `scrollsdk` as instructed by the official [Scroll SDK documentation](https://docs.scroll.xyz/en/sdk/guides/devnet-deployment/#prerequisites).
+You should also install `docker`, `kubectl`, `minikube`, `helm`, `node`, and `scrollsdk` as instructed by the official [Scroll SDK documentation](https://docs.scroll.io/en/sdk/guides/devnet-deployment/#prerequisites).
 
 You should initialize your `minikube` environment with three commands:
 ```bash
@@ -132,7 +132,7 @@ Now, you should add mappings for the Scroll SDK services to your local DNS resol
 ```
 
 You should be able to access the endpoints via your browser.
-[This section](https://docs.scroll.xyz/en/sdk/guides/devnet-deployment/#web-uis) of the Scroll SDK documentation provides an explanation of all the available dashboards.
+[This section](https://docs.scroll.io/en/sdk/guides/devnet-deployment/#web-uis) of the Scroll SDK documentation provides an explanation of all the available dashboards.
 
 ### 🚀 Launching Sindri Provers
 
