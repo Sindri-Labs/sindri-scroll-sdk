@@ -46,19 +46,13 @@ struct VerificationKey {
     verification_key: String,
 }
 
-#[allow(dead_code)]
 #[derive(Deserialize)]
-struct SindriTaskStatusResponse {
+struct SindriProofInfoResponse {
     pub proof_id: String,
-    pub project_name: String,
-    pub perform_verify: bool,
     pub status: SindriTaskStatus,
     pub compute_time_sec: Option<f64>,
-    pub queue_time_sec: Option<f64>,
     pub verification_key: Option<VerificationKey>,
     pub proof: Option<serde_json::Value>,
-    pub public: Option<serde_json::Value>,
-    pub warnings: Option<Vec<String>>,
     pub error: Option<String>,
 }
 
@@ -123,14 +117,12 @@ impl ProvingService for CloudProver {
 
         #[allow(dead_code)]
         #[derive(serde::Deserialize)]
-        struct SindriGetDetailResponse {
-            circuit_id: String,
-            circuit_name: String,
+        struct SindriCircuitInfoResponse {
             verification_key: VerificationKey,
         }
 
         match self
-            .get_with_token::<SindriGetDetailResponse>(
+            .get_with_token::<SindriCircuitInfoResponse>(
                 MethodClass::Circuit(req.circuit_type),
                 "detail",
                 None,
@@ -173,7 +165,7 @@ impl ProvingService for CloudProver {
         };
 
         match self
-            .post_with_token::<SindriProveRequest, SindriTaskStatusResponse>(
+            .post_with_token::<SindriProveRequest, SindriProofInfoResponse>(
                 MethodClass::Circuit(req.circuit_type),
                 "prove",
                 &sindri_req,
@@ -212,7 +204,7 @@ impl ProvingService for CloudProver {
         .collect();
 
         match self
-            .get_with_token::<SindriTaskStatusResponse>(
+            .get_with_token::<SindriProofInfoResponse>(
                 MethodClass::Proof(req.task_id.clone()),
                 "detail",
                 Some(query_params),
