@@ -21,8 +21,6 @@
 - [ ] Optimization
 - [ ] Documentation Update
 
-## Description
-
 ## Related Tickets & Documents
 
 <!--
@@ -36,6 +34,10 @@ automatically close the issue.
 
 - Related Issue #
 - Closes #
+
+## Description
+
+## Developer Notes
 
 ## Testing Instructions, Screenshots, Recordings
 
