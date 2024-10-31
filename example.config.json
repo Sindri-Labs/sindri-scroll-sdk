@@ -2,7 +2,7 @@
     "prover_name_prefix": "sindri_",
     "keys_dir": "keys",
     "coordinator": {
-        "base_url": "https://coordinator-ap:80",
+        "base_url": "https://coordinator-api:80",
         "retry_count": 3,
         "retry_wait_time_sec": 5,
         "connection_timeout_sec": 60
