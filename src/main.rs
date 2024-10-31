@@ -3,6 +3,7 @@
 //! This program connects the Sindri proving service to the Scroll proving SDK.
 //!
 use async_trait::async_trait;
+use chrono::{DateTime, FixedOffset};
 use clap::Parser;
 use core::time::Duration;
 use reqwest::{
@@ -49,7 +50,7 @@ struct VerificationKey {
 #[derive(Deserialize)]
 struct SindriProofInfoResponse {
     pub compute_time_sec: Option<f64>,
-    pub date_created: f64,
+    pub date_created: String,
     pub error: Option<String>,
     pub proof_id: String,
     pub proof: Option<serde_json::Value>,
@@ -98,22 +99,53 @@ fn reformat_vk(vk_old: String) -> anyhow::Result<String> {
     Ok(vk_new)
 }
 
-// Calculate the start and finish times of the proof task.
-fn calculate_proving_times(resp: &SindriProofInfoResponse) -> (Option<f64>, Option<f64>) {
+// Convert an ISO 8601 string to a f64 timestamp.
+fn iso8601_to_f64(iso8601_str: &str) -> Result<f64, chrono::ParseError> {
+    // Parse the ISO 8601 string into a DateTime<Utc> object
+    let datetime: DateTime<FixedOffset> = match DateTime::parse_from_rfc3339(&iso8601_str) {
+        Ok(datetime) => datetime,
+        Err(error) => return Err(error),
+    };
+
+    // Convert the DateTime<Utc> object to a timestamp (seconds since the Unix epoch)
+    let timestamp = datetime.timestamp() as f64;
+
+    // Convert the nanoseconds part to f64 and add it to the timestamp
+    let nanoseconds = datetime.timestamp_subsec_nanos() as f64;
+    let timestamp_f64 = timestamp + nanoseconds / 1_000_000_000.0;
+
+    Ok(timestamp_f64)
+}
+
+// Return the created, start, and finish times of the proof task.
+fn proving_timestamps_from_response(
+    resp: &SindriProofInfoResponse,
+) -> (f64, Option<f64>, Option<f64>) {
     let mut started_at: Option<f64> = None;
     let mut finished_at: Option<f64> = None;
 
+    let created_at: f64 = match iso8601_to_f64(&resp.date_created) {
+        Ok(created_at) => created_at,
+        Err(_) => return (0.0, None, None),
+    };
     let compute_time_sec = resp.compute_time_sec.unwrap_or(0.0);
     let queue_time_sec = resp.queue_time_sec.unwrap_or(0.0);
 
     if queue_time_sec > 0.0 {
-        started_at = Some(resp.date_created + queue_time_sec);
+        started_at = Some(created_at + queue_time_sec);
         if compute_time_sec > 0.0 {
-            finished_at = Some(resp.date_created + queue_time_sec + compute_time_sec);
+            finished_at = Some(created_at + queue_time_sec + compute_time_sec);
         }
     }
 
-    (started_at, finished_at)
+    log::trace!(
+        "resp.date_created: {:?} created_at: {} started_at: {:?} finished_at: {:?}",
+        resp.date_created,
+        created_at,
+        started_at,
+        finished_at
+    );
+    (created_at, started_at, finished_at)
 }
 
 #[async_trait]
@@ -192,14 +224,14 @@ impl ProvingService for CloudProver {
             .await
         {
             Ok(resp) => {
-                let (started_at, finished_at) = calculate_proving_times(&resp);
+                let (created_at, started_at, finished_at) = proving_timestamps_from_response(&resp);
                 ProveResponse {
                     task_id: resp.proof_id,
                     circuit_type: req.circuit_type,
                     circuit_version: req.circuit_version,
                     hard_fork_name: req.hard_fork_name,
                     status: resp.status.into(),
-                    created_at: resp.date_created,
+                    created_at,
                     started_at,
                     finished_at,
                     compute_time_sec: resp.compute_time_sec,
@@ -234,14 +266,14 @@ impl ProvingService for CloudProver {
             .await
         {
             Ok(resp) => {
-                let (started_at, finished_at) = calculate_proving_times(&resp);
+                let (created_at, started_at, finished_at) = proving_timestamps_from_response(&resp);
                 QueryTaskResponse {
                     task_id: resp.proof_id,
                     circuit_type: CircuitType::Undefined, // TODO:
                     circuit_version: "".to_string(),
                     hard_fork_name: "".to_string(),
                     status: resp.status.into(),
-                    created_at: resp.date_created,
+                    created_at,
                     started_at,
                     finished_at,
                     compute_time_sec: resp.compute_time_sec,
