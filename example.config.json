@@ -2,24 +2,25 @@
     "prover_name_prefix": "sindri_",
     "keys_dir": "keys",
     "coordinator": {
-        "base_url": "https://your-coordinator-api",
+        "base_url": "https://coordinator-ap:80",
         "retry_count": 3,
         "retry_wait_time_sec": 5,
         "connection_timeout_sec": 60
     },
     "l2geth": {
-        "endpoint": "https://your-l2-rpc"
+        "endpoint": "https://l2-rpc:8545"
     },
     "prover": {
         "circuit_type": 3,
         "circuit_version": "v0.13.1",
         "n_workers": 1,
         "cloud": {
-            "base_url": "https://sindri.app",
+            "base_url": "https://sindri.app/api/v1/",
             "api_key": "<your Sindri API key>",
             "retry_count": 3,
             "retry_wait_time_sec": 5,
             "connection_timeout_sec": 60
         }
-    }
+    },
+    "health_listener_addr": "0.0.0.0:5678"
 }
