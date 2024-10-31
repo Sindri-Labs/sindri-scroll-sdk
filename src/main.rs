@@ -3,6 +3,7 @@
 //! This program connects the Sindri proving service to the Scroll proving SDK.
 //!
 use async_trait::async_trait;
+use chrono::{DateTime, FixedOffset};
 use clap::Parser;
 use core::time::Duration;
 use reqwest::{
@@ -48,12 +49,14 @@ struct VerificationKey {
 
 #[derive(Deserialize)]
 struct SindriProofInfoResponse {
-    pub proof_id: String,
-    pub status: SindriTaskStatus,
     pub compute_time_sec: Option<f64>,
-    pub verification_key: Option<VerificationKey>,
-    pub proof: Option<serde_json::Value>,
+    pub date_created: String,
     pub error: Option<String>,
+    pub proof_id: String,
+    pub proof: Option<serde_json::Value>,
+    pub queue_time_sec: Option<f64>,
+    pub status: SindriTaskStatus,
+    pub verification_key: Option<VerificationKey>,
 }
 
 #[derive(Deserialize)]
@@ -94,6 +97,55 @@ fn reformat_vk(vk_old: String) -> anyhow::Result<String> {
     let vk_new = base64::encode_config(vk, base64::STANDARD);
 
     Ok(vk_new)
+}
+
+// Convert an ISO 8601 string to a f64 timestamp.
+fn iso8601_to_f64(iso8601_str: &str) -> Result<f64, chrono::ParseError> {
+    // Parse the ISO 8601 string into a DateTime<Utc> object
+    let datetime: DateTime<FixedOffset> = match DateTime::parse_from_rfc3339(&iso8601_str) {
+        Ok(datetime) => datetime,
+        Err(error) => return Err(error),
+    };
+
+    // Convert the DateTime<Utc> object to a timestamp (seconds since the Unix epoch)
+    let timestamp = datetime.timestamp() as f64;
+
+    // Convert the nanoseconds part to f64 and add it to the timestamp
+    let nanoseconds = datetime.timestamp_subsec_nanos() as f64;
+    let timestamp_f64 = timestamp + nanoseconds / 1_000_000_000.0;
+
+    Ok(timestamp_f64)
+}
+
+// Return the created, start, and finish times of the proof task.
+fn proving_timestamps_from_response(
+    resp: &SindriProofInfoResponse,
+) -> (f64, Option<f64>, Option<f64>) {
+    let mut started_at: Option<f64> = None;
+    let mut finished_at: Option<f64> = None;
+
+    let created_at: f64 = match iso8601_to_f64(&resp.date_created) {
+        Ok(created_at) => created_at,
+        Err(_) => return (0.0, None, None),
+    };
+    let compute_time_sec = resp.compute_time_sec.unwrap_or(0.0);
+    let queue_time_sec = resp.queue_time_sec.unwrap_or(0.0);
+
+    if queue_time_sec > 0.0 {
+        started_at = Some(created_at + queue_time_sec);
+        if compute_time_sec > 0.0 {
+            finished_at = Some(created_at + queue_time_sec + compute_time_sec);
+        }
+    }
+
+    log::trace!(
+        "resp.date_created: {:?} created_at: {} started_at: {:?} finished_at: {:?}",
+        resp.date_created,
+        created_at,
+        started_at,
+        finished_at
+    );
+    (created_at, started_at, finished_at)
 }
 
 #[async_trait]
@@ -171,21 +223,24 @@ impl ProvingService for CloudProver {
             )
             .await
         {
-            Ok(resp) => ProveResponse {
-                task_id: resp.proof_id,
-                circuit_type: req.circuit_type,
-                circuit_version: req.circuit_version,
-                hard_fork_name: req.hard_fork_name,
-                status: resp.status.into(),
-                created_at: 0.0,   // TODO:
-                started_at: None,  // TODO:
-                finished_at: None, // TODO:
-                compute_time_sec: resp.compute_time_sec,
-                input: Some(req.input.clone()),
-                proof: serde_json::to_string(&resp.proof).ok(),
-                vk: resp.verification_key.map(|vk| vk.verification_key),
-                error: resp.error,
-            },
+            Ok(resp) => {
+                let (created_at, started_at, finished_at) = proving_timestamps_from_response(&resp);
+                ProveResponse {
+                    task_id: resp.proof_id,
+                    circuit_type: req.circuit_type,
+                    circuit_version: req.circuit_version,
+                    hard_fork_name: req.hard_fork_name,
+                    status: resp.status.into(),
+                    created_at,
+                    started_at,
+                    finished_at,
+                    compute_time_sec: resp.compute_time_sec,
+                    input: Some(req.input.clone()),
+                    proof: serde_json::to_string(&resp.proof).ok(),
+                    vk: resp.verification_key.map(|vk| vk.verification_key),
+                    error: resp.error,
+                }
+            }
             Err(e) => {
                 return build_prove_error_response(&req, &format!("Failed to request proof: {}", e))
             }
@@ -210,21 +265,24 @@ impl ProvingService for CloudProver {
             )
             .await
         {
-            Ok(resp) => QueryTaskResponse {
-                task_id: resp.proof_id,
-                circuit_type: CircuitType::Undefined, // TODO:
-                circuit_version: "".to_string(),
-                hard_fork_name: "".to_string(),
-                status: resp.status.into(),
-                created_at: 0.0,   // TODO:
-                started_at: None,  // TODO:
-                finished_at: None, // TODO:
-                compute_time_sec: resp.compute_time_sec,
-                input: None,
-                proof: serde_json::to_string(&resp.proof).ok(),
-                vk: resp.verification_key.map(|vk| vk.verification_key),
-                error: resp.error,
-            },
+            Ok(resp) => {
+                let (created_at, started_at, finished_at) = proving_timestamps_from_response(&resp);
+                QueryTaskResponse {
+                    task_id: resp.proof_id,
+                    circuit_type: CircuitType::Undefined, // TODO:
+                    circuit_version: "".to_string(),
+                    hard_fork_name: "".to_string(),
+                    status: resp.status.into(),
+                    created_at,
+                    started_at,
+                    finished_at,
+                    compute_time_sec: resp.compute_time_sec,
+                    input: None,
+                    proof: serde_json::to_string(&resp.proof).ok(),
+                    vk: resp.verification_key.map(|vk| vk.verification_key),
+                    error: resp.error,
+                }
+            }
             Err(e) => {
                 log::error!("Failed to query proof: {:?}", e);
                 QueryTaskResponse {
@@ -294,7 +352,9 @@ impl CloudProver {
             .build();
 
         let base_url = Url::parse(&cfg.base_url).expect("cannot parse cloud prover base_url");
-        let api_url = base_url.join(SINDRI_API_PATH).expect("cannot parse cloud prover api_url");
+        let api_url = base_url
+            .join(SINDRI_API_PATH)
+            .expect("cannot parse cloud prover api_url");
 
         Self {
             base_url: api_url,
