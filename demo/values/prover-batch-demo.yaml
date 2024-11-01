@@ -27,7 +27,7 @@ scrollConfig: |
       "circuit_version": "v0.13.1",
       "n_workers": 1,
       "cloud": {
-        "base_url": "https://sindri.app/api/v1/",
+        "base_url": "https://sindri.app",
         "api_key": "<your-api-key>",
         "retry_count": 3,
         "retry_wait_time_sec": 5,
