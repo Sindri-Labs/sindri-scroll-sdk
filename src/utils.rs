@@ -3,13 +3,10 @@ use chrono::{DateTime, FixedOffset};
 
 // Convert an ISO 8601 string to a f64 timestamp.
 fn iso8601_to_f64(iso8601_str: &str) -> Result<f64, chrono::ParseError> {
-    // Parse the ISO 8601 string into a DateTime<Utc> object
-    let datetime: DateTime<FixedOffset> = match DateTime::parse_from_rfc3339(&iso8601_str) {
-        Ok(datetime) => datetime,
-        Err(error) => return Err(error),
-    };
+    // Parse the ISO 8601 string into a DateTime<FixedOffset> object
+    let datetime: DateTime<FixedOffset> = iso8601_str.parse()?;
 
-    // Convert the DateTime<Utc> object to a timestamp (seconds since the Unix epoch)
+    // Convert the DateTime<FixedOffset> object to a timestamp (seconds since the Unix epoch)
     let timestamp = datetime.timestamp() as f64;
 
     // Convert the nanoseconds part to f64 and add it to the timestamp
