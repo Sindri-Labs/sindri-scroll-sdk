@@ -1,6 +1,6 @@
 use chrono::{DateTime, Utc};
-use sindri_scroll_sdk::prover::proving_timestamps_from_response;
 use sindri_scroll_sdk::prover::{SindriProofInfoResponse, SindriTaskStatus};
+use sindri_scroll_sdk::utils::proving_timestamps_from_response;
 
 #[test]
 fn test_proving_timestamps_from_response() {
