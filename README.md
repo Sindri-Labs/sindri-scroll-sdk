@@ -47,7 +47,7 @@ flowchart LR
 
 For more information about the Sindri platform, please check out [sindri.app](https://sindri.app/).
 The next section ([Getting Started](#getting-started)) shows how to launch a local Scroll SDK devote with provers running on Sindri.
-For production deployments, please consult the official [Scroll SDK documentation](https://docs.scroll.io/en/sdk/guides/production-deployment/).
+For production deployments, please consult the official [Scroll SDK documentation](https://docs.scroll.io/en/sdk/).
 
 # Getting Started
 
