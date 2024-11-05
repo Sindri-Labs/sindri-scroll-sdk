@@ -464,7 +464,9 @@ pub fn override_config(config: &mut Config) -> Result<(), Box<dyn std::error::Er
 
     // Override the L2GETH endpoint
     if let Some(l2geth_endpoint) = override_config.l2geth_endpoint {
-        config.l2geth.clone().unwrap().endpoint = l2geth_endpoint;
+        if let Some(l2geth) = &mut config.l2geth {
+            l2geth.endpoint = l2geth_endpoint;
+        }
     }
 
     // Override the circuit type
@@ -489,27 +491,37 @@ pub fn override_config(config: &mut Config) -> Result<(), Box<dyn std::error::Er
 
     // Override the cloud prover base URL
     if let Some(prover_cloud_base_url) = override_config.prover_cloud_base_url {
-        config.prover.cloud.clone().unwrap().base_url = prover_cloud_base_url;
+        if let Some(cloud) = &mut config.prover.cloud {
+            cloud.base_url = prover_cloud_base_url;
+        }
     }
 
     // Override the cloud prover API key
     if let Some(prover_cloud_api_key) = override_config.prover_cloud_api_key {
-        config.prover.cloud.clone().unwrap().api_key = prover_cloud_api_key;
+        if let Some(cloud) = &mut config.prover.cloud {
+            cloud.api_key = prover_cloud_api_key;
+        }
     }
 
     // Override the cloud prover retry count
     if let Some(prover_cloud_retry_count) = override_config.prover_cloud_retry_count {
-        config.prover.cloud.clone().unwrap().retry_count = prover_cloud_retry_count;
+        if let Some(cloud) = &mut config.prover.cloud {
+            cloud.retry_count = prover_cloud_retry_count;
+        }
     }
 
     // Override the cloud prover retry wait time
     if let Some(prover_cloud_retry_wait_time_sec) = override_config.prover_cloud_retry_wait_time_sec {
-        config.prover.cloud.clone().unwrap().retry_wait_time_sec = prover_cloud_retry_wait_time_sec;
+        if let Some(cloud) = &mut config.prover.cloud {
+            cloud.retry_wait_time_sec = prover_cloud_retry_wait_time_sec;
+        }
     }
 
     // Override the cloud prover connection timeout
     if let Some(prover_cloud_connection_timeout_sec) = override_config.prover_cloud_connection_timeout_sec {
-        config.prover.cloud.clone().unwrap().connection_timeout_sec = prover_cloud_connection_timeout_sec;
+        if let Some(cloud) = &mut config.prover.cloud {
+            cloud.connection_timeout_sec = prover_cloud_connection_timeout_sec;
+        }
     }
 
     // Override the health listener address
