@@ -4,7 +4,7 @@
 //!
 use clap::Parser;
 use scroll_proving_sdk::{config::Config, prover::ProverBuilder, utils::init_tracing};
-use sindri_scroll_sdk::prover::CloudProver;
+use sindri_scroll_sdk::prover::{CloudProver, override_config};
 
 #[derive(Parser, Debug)]
 #[clap(disable_version_flag = true)]
@@ -19,7 +19,8 @@ async fn main() -> anyhow::Result<()> {
     init_tracing();
 
     let args = Args::parse();
-    let cfg: Config = Config::from_file(args.config_file)?;
+    let mut cfg: Config = Config::from_file(args.config_file)?;
+    let cfg = override_config(&mut cfg).expect("Failed to override config");
     let cloud_prover = CloudProver::new(
         cfg.prover
             .cloud

@@ -1,5 +1,6 @@
 use async_trait::async_trait;
 use core::time::Duration;
+use envy;
 use reqwest::{
     header::{CONTENT_ENCODING, CONTENT_TYPE},
     Url,
@@ -11,7 +12,7 @@ use std::collections::HashMap;
 
 use crate::utils::proving_timestamps_from_response;
 use scroll_proving_sdk::{
-    config::CloudProverConfig,
+    config::{CloudProverConfig, Config},
     prover::{
         proving_service::{
             GetVkRequest, GetVkResponse, ProveRequest, ProveResponse, QueryTaskRequest,
@@ -405,4 +406,116 @@ impl CloudProver {
 
         serde::Deserialize::deserialize(deserializer).map_err(|e| anyhow::anyhow!(e))
     }
+}
+
+#[derive(serde::Deserialize)]
+struct OverrideConfig {
+    prover_name_prefix: Option<String>,
+    keys_dir: Option<String>,
+    coordinator_base_url:  Option<String>,
+    coordinator_retry_count: Option<u32>,
+    coordinator_retry_wait_time_sec: Option<u64>,
+    coordinator_connection_timeout_sec: Option<u64>,
+    l2geth_endpoint: Option<String>,
+    prover_circuit_type: Option<String>, // CircuitType is an enum
+    prover_circuit_version: Option<String>,
+    prover_n_workers: Option<usize>,
+    prover_cloud_base_url: Option<String>,
+    prover_cloud_api_key: Option<String>,
+    prover_cloud_retry_count: Option<u32>,
+    prover_cloud_retry_wait_time_sec: Option<u64>,
+    prover_cloud_connection_timeout_sec: Option<u64>,
+    health_listener_addr: Option<String>,
+}
+
+// Override the config parameters with values supplied by environment variables.
+pub fn override_config(config: &mut Config) -> Result<Config, Box<dyn std::error::Error>> {
+    let override_config = envy::from_env::<OverrideConfig>()?;
+
+    // Override the prover name prefix
+    if let Some(prover_name_prefix) = override_config.prover_name_prefix {
+        config.prover_name_prefix = prover_name_prefix;
+    }
+
+    // Override the keys directory
+    if let Some(keys_dir) = override_config.keys_dir {
+        config.keys_dir = keys_dir;
+    }
+
+    // Override the coordinator base URL
+    if let Some(coordinator_base_url) = override_config.coordinator_base_url {
+        config.coordinator.base_url = coordinator_base_url;
+    }
+
+    // Override the coordinator retry count
+    if let Some(coordinator_retry_count) = override_config.coordinator_retry_count {
+        config.coordinator.retry_count = coordinator_retry_count;
+    }
+
+    // Override the coordinator retry wait time
+    if let Some(coordinator_retry_wait_time_sec) = override_config.coordinator_retry_wait_time_sec {
+        config.coordinator.retry_wait_time_sec = coordinator_retry_wait_time_sec;
+    }
+
+    // Override the coordinator connection timeout
+    if let Some(coordinator_connection_timeout_sec) = override_config.coordinator_connection_timeout_sec {
+        config.coordinator.connection_timeout_sec = coordinator_connection_timeout_sec;
+    }
+
+    // Override the L2GETH endpoint
+    if let Some(l2geth_endpoint) = override_config.l2geth_endpoint {
+        config.l2geth.clone().unwrap().endpoint = l2geth_endpoint;
+    }
+
+    // Override the circuit type
+    if let Some(prover_circuit_type) = override_config.prover_circuit_type {
+        match prover_circuit_type.as_str() {
+            "chunk" => config.prover.circuit_type = CircuitType::Chunk,
+            "batch" => config.prover.circuit_type = CircuitType::Batch,
+            "bundle" => config.prover.circuit_type = CircuitType::Bundle,
+            _ => return Err("Invalid circuit type".into()),
+        }
+    }
+
+    // Override the circuit version
+    if let Some(prover_circuit_version) = override_config.prover_circuit_version {
+        config.prover.circuit_version = prover_circuit_version;
+    }
+
+    // Override the number of workers
+    if let Some(prover_n_workers) = override_config.prover_n_workers {
+        config.prover.n_workers = prover_n_workers;
+    }
+
+    // Override the cloud prover base URL
+    if let Some(prover_cloud_base_url) = override_config.prover_cloud_base_url {
+        config.prover.cloud.clone().unwrap().base_url = prover_cloud_base_url;
+    }
+
+    // Override the cloud prover API key
+    if let Some(prover_cloud_api_key) = override_config.prover_cloud_api_key {
+        config.prover.cloud.clone().unwrap().api_key = prover_cloud_api_key;
+    }
+
+    // Override the cloud prover retry count
+    if let Some(prover_cloud_retry_count) = override_config.prover_cloud_retry_count {
+        config.prover.cloud.clone().unwrap().retry_count = prover_cloud_retry_count;
+    }
+
+    // Override the cloud prover retry wait time
+    if let Some(prover_cloud_retry_wait_time_sec) = override_config.prover_cloud_retry_wait_time_sec {
+        config.prover.cloud.clone().unwrap().retry_wait_time_sec = prover_cloud_retry_wait_time_sec;
+    }
+
+    // Override the cloud prover connection timeout
+    if let Some(prover_cloud_connection_timeout_sec) = override_config.prover_cloud_connection_timeout_sec {
+        config.prover.cloud.clone().unwrap().connection_timeout_sec = prover_cloud_connection_timeout_sec;
+    }
+
+    // Override the health listener address
+    if let Some(health_listener_addr) = override_config.health_listener_addr {
+        config.health_listener_addr = health_listener_addr;
+    }
+
+    Ok(config.clone())
 }
