@@ -6,7 +6,7 @@ use scroll_proving_sdk::{config::Config, prover::CircuitType};
 #[clap(disable_version_flag = true)]
 struct Args {
     /// Path of config file
-    #[arg(long = "config", default_value = "config.json")]
+    #[arg(long = "config", default_value = "example.config.json")]
     config_file: String,
 }
 
