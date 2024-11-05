@@ -20,7 +20,7 @@ async fn main() -> anyhow::Result<()> {
 
     let args = Args::parse();
     let mut cfg: Config = Config::from_file(args.config_file)?;
-    let cfg = override_config(&mut cfg).expect("Failed to override config");
+    override_config(&mut cfg).expect("Failed to override config");
     let cloud_prover = CloudProver::new(
         cfg.prover
             .cloud

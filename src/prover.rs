@@ -429,7 +429,7 @@ struct OverrideConfig {
 }
 
 // Override the config parameters with values supplied by environment variables.
-pub fn override_config(config: &mut Config) -> Result<Config, Box<dyn std::error::Error>> {
+pub fn override_config(config: &mut Config) -> Result<(), Box<dyn std::error::Error>> {
     let override_config = envy::from_env::<OverrideConfig>()?;
 
     // Override the prover name prefix
@@ -517,5 +517,5 @@ pub fn override_config(config: &mut Config) -> Result<Config, Box<dyn std::error
         config.health_listener_addr = health_listener_addr;
     }
 
-    Ok(config.clone())
+    Ok(())
 }
