@@ -471,7 +471,7 @@ pub fn override_config(config: &mut Config) -> Result<(), Box<dyn std::error::Er
 
     // Override the circuit type
     if let Some(prover_circuit_type) = override_config.prover_circuit_type {
-        match prover_circuit_type.as_str() {
+        match prover_circuit_type.to_lowercase().as_str() {
             "chunk" => config.prover.circuit_type = CircuitType::Chunk,
             "batch" => config.prover.circuit_type = CircuitType::Batch,
             "bundle" => config.prover.circuit_type = CircuitType::Bundle,
