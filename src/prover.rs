@@ -408,6 +408,9 @@ impl CloudProver {
     }
 }
 
+// This struct supplies values that override the default config values.
+// Users may only override the values they need to change, therefore
+// the field types are all Option<T>.
 #[derive(serde::Deserialize)]
 struct OverrideConfig {
     prover_name_prefix: Option<String>,
