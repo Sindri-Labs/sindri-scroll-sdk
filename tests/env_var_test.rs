@@ -1,5 +1,5 @@
 use clap::Parser;
-use sindri_scroll_sdk::prover::{override_config};
+use sindri_scroll_sdk::prover::override_config;
 use scroll_proving_sdk::{config::Config, prover::CircuitType};
 
 #[derive(Parser, Debug)]
