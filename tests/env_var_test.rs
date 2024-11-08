@@ -14,8 +14,7 @@ struct Args {
 // Override the default config to use the chunk circuit type.
 #[test]
 fn test_circuit_type_override() {
-    let args = Args::parse();
-    let mut cfg: Config = Config::from_file(args.config_file).unwrap();
+    let mut cfg = serde_json::from_str(DEFAULT_CONFIG).unwrap();
     std::env::set_var("PROVER_CIRCUIT_TYPE", "chunk");
     override_config(&mut cfg).expect("Failed to override config");
     assert_eq!(cfg.prover.circuit_type, CircuitType::Chunk);
@@ -27,8 +26,7 @@ fn test_circuit_type_override() {
 // It also tests nested fields for Option types.
 #[test]
 fn test_string_type_override() {
-    let args = Args::parse();
-    let mut cfg: Config = Config::from_file(args.config_file).unwrap();
+    let mut cfg = serde_json::from_str(DEFAULT_CONFIG).unwrap();
     std::env::set_var("PROVER_NAME_PREFIX", "__SINDRI__");
     std::env::set_var("L2GETH_ENDPOINT", "http://l2-rpc:8545");
     std::env::set_var("PROVER_CLOUD_API_KEY", "sindri_apikeyvalue");
@@ -41,8 +39,7 @@ fn test_string_type_override() {
 // This test checks correct deserialization of integer types.
 #[test] 
 fn test_uint_type_override() {
-    let args = Args::parse();
-    let mut cfg: Config = Config::from_file(args.config_file).unwrap();
+    let mut cfg = serde_json::from_str(DEFAULT_CONFIG).unwrap();
     std::env::set_var("PROVER_N_WORKERS", "100");
     std::env::set_var("PROVER_CLOUD_RETRY_COUNT", "15");
     std::env::set_var("PROVER_CLOUD_CONNECTION_TIMEOUT_SEC", "300");
@@ -51,3 +48,30 @@ fn test_uint_type_override() {
     assert_eq!(cfg.prover.cloud.clone().unwrap().retry_count, 15_u32);
     assert_eq!(cfg.prover.cloud.unwrap().connection_timeout_sec, 300_u64);
 }
+
+const DEFAULT_CONFIG: &str = r#"{
+    "prover_name_prefix": "sindri_",
+    "keys_dir": "keys",
+    "coordinator": {
+        "base_url": "https://coordinator-api:80",
+        "retry_count": 3,
+        "retry_wait_time_sec": 5,
+        "connection_timeout_sec": 60
+    },
+    "l2geth": {
+        "endpoint": "https://l2-rpc:8545"
+    },
+    "prover": {
+        "circuit_type": 3,
+        "circuit_version": "v0.13.1",
+        "n_workers": 1,
+        "cloud": {
+            "base_url": "https://sindri.app",
+            "api_key": "<your Sindri API key>",
+            "retry_count": 3,
+            "retry_wait_time_sec": 5,
+            "connection_timeout_sec": 60
+        }
+    },
+    "health_listener_addr": "0.0.0.0:5678"
+}"#;
