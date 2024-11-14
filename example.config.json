@@ -1,6 +1,7 @@
 {
     "prover_name_prefix": "sindri_",
     "keys_dir": "keys",
+    "db_path": "db",
     "coordinator": {
         "base_url": "https://coordinator-api:80",
         "retry_count": 3,
