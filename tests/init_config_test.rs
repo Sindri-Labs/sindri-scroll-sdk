@@ -41,7 +41,7 @@ fn test_config_with_envs() {
 
 // Ensures that our understanding of the configuration file matches `scroll-proving-sdk`
 // expectations.  If this test fails, investigate recent updates upstream and ensure
-// example `config.json` files are accurate
+// example `config.json` files are accurate.
 #[tokio::test]
 async fn test_initialize_from_config_pipeline() {
     let default_config_path = "tests/test_data/default_config.json";
