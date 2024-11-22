@@ -8,6 +8,12 @@ persistence:
         type: configMap
         mountPath: /sdk_prover/
         name: prover-chunk-config
+    db:
+      enabled: true
+      type: pvc
+      mountPath: /db/
+      size: 10Mi
+      accessMode: ReadWriteOnce
 
 scrollConfig: |
     {
