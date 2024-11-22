@@ -2,17 +2,29 @@ use scroll_proving_sdk::{config::Config, prover::CircuitType};
 use sindri_scroll_sdk::prover::CloudProver;
 
 // Ensures that configuration file loading does not require environment variables
-#[tokio::test]
-async fn test_config_without_envs() {
-    let default_config_path = "tests/test_data/default_config.json";
-    let cfg: Config = Config::from_file_and_env(default_config_path.to_string())
-        .expect("Issue loading test configuration file");
+#[test]
+fn test_config_without_envs() {
 
-    // Check a few values for consistency with test_data file
-    assert_eq!(cfg.prover_name_prefix, "sindri_");
-    assert_eq!(cfg.prover.circuit_type, CircuitType::Bundle);
-    assert_eq!(cfg.db_path, "db");
-    assert_eq!(cfg.prover.n_workers, 1_usize);
+    // The utility function below wraps our test code in a closure which is exclusive from
+    // `test_config_with_envs`.  No matter what `N_WORKERS` and `COORDINATOR_BASE_URL` are
+    // they are unset for the purposes of this test.
+    temp_env::with_vars(
+        [
+            ("N_WORKERS", None::<String>),
+            ("COORDINATOR_BASE_URL", None),
+        ],
+        || {
+            let default_config_path = "tests/test_data/default_config.json";
+            let cfg: Config = Config::from_file_and_env(default_config_path.to_string())
+                .expect("Issue loading test configuration file");
+
+            // Check a few values for consistency with test_data file
+            assert_eq!(cfg.prover_name_prefix, "sindri_");
+            assert_eq!(cfg.prover.circuit_type, CircuitType::Bundle);
+            assert_eq!(cfg.db_path, "db");
+            assert_eq!(cfg.prover.n_workers, 1_usize);
+        },
+    );
 }
 
 // Ensures that various environment variable overrides are successful
@@ -26,7 +38,7 @@ fn test_config_with_envs() {
     let coordinator_url_override = "my-special-coordinator";
 
     // The utility function below sets environment variables for the duration of the closure.
-    // A singleton mutex ensures that the other test, test_config_without_envs, is not 
+    // A singleton mutex ensures that the other test, `test_config_without_envs`, is not
     // influenced by these environment variable settings.
     temp_env::with_vars(
         [
