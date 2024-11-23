@@ -36,7 +36,7 @@ Generally, the latest stable release is safe to use with the latest Scroll SDK c
 
 Now, you can launch all Scroll zkEVM proving services with one command via 
    ```bash
-   SINDRI_VERSION=0.0.3 ./deploy.sh
+   SINDRI_VERSION=0.0.4 ./deploy.sh
    ```
 Running `kubectl get pods` should reveal three new services, one for each circuit type.
 Assuming your chain has proving tasks, you can monitor the progress of proof generation either via the logs of any prover pod or via Sindri's web front-end after logging in:

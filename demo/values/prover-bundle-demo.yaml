@@ -8,11 +8,18 @@ persistence:
     type: configMap
     mountPath: /sdk_prover/
     name: prover-bundle-config
+  db:
+    enabled: true
+    type: pvc
+    mountPath: /db/
+    size: 10Mi
+    accessMode: ReadWriteOnce
 
 scrollConfig: |
   {
     "prover_name_prefix": "sindri_bundle_",
     "keys_dir": "keys",
+    "db_path": "db",
     "coordinator": {
       "base_url": "http://coordinator-api:80",
       "retry_count": 3,

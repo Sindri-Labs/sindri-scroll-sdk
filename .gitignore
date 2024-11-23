@@ -1,5 +1,12 @@
+# Ignore local rust builds
 /target
-config.json
 
+# Ignore artifacts produced by local development
+config.json
+db/
+keys/
+!keys/.gitkeep
+
+# Ignore custom values files
 demo/values/*
 !demo/values/*-demo.yaml
