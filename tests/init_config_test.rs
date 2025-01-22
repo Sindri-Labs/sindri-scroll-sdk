@@ -20,8 +20,10 @@ fn test_config_without_envs() {
 
             // Check a few values for consistency with test_data file
             assert_eq!(cfg.prover_name_prefix, "sindri_");
-            assert_eq!(cfg.prover.circuit_type, CircuitType::Bundle);
-            assert_eq!(cfg.db_path, "db");
+            assert_eq!(cfg.prover.circuit_types[0], CircuitType::Chunk);
+            assert_eq!(cfg.prover.circuit_types[1], CircuitType::Batch);
+            assert_eq!(cfg.prover.circuit_types[2], CircuitType::Bundle);
+            assert_eq!(cfg.db_path, Some("db".to_string()));
             assert_eq!(cfg.prover.n_workers, 1_usize);
         },
     );

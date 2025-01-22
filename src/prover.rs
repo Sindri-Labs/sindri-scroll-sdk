@@ -96,10 +96,10 @@ impl ProvingService for CloudProver {
     // 2. Submit a proof to the Sindri proving service.
     // 3. Query the status of the proof task.
 
-    async fn get_vk(&self, req: GetVkRequest) -> GetVkResponse {
+    async fn get_vks(&self, req: GetVkRequest) -> GetVkResponse {
         if req.circuit_version != THIS_CIRCUIT_VERSION {
             return GetVkResponse {
-                vk: String::new(),
+                vks: Vec::new(),
                 error: Some("circuit version mismatch".to_string()),
             };
         };
@@ -109,25 +109,37 @@ impl ProvingService for CloudProver {
             verification_key: VerificationKey,
         }
 
-        match self
-            .get_with_token::<SindriCircuitInfoResponse>(
-                MethodClass::Circuit(req.circuit_type),
-                "detail",
-                None,
-            )
-            .await
-        {
-            Ok(resp) => match reformat_vk(resp.verification_key.verification_key) {
-                Ok(vk) => GetVkResponse { vk, error: None },
-                Err(e) => GetVkResponse {
-                    vk: String::new(),
+        let mut vks: Vec<String> = Vec::new();
+        for circuit_type in req.circuit_types {
+            match self
+                .get_with_token::<SindriCircuitInfoResponse>(
+                    MethodClass::Circuit(circuit_type),
+                    "detail",
+                    None,
+                )
+                .await
+            {
+                Ok(resp) => match reformat_vk(resp.verification_key.verification_key) {
+                    Ok(vk) =>{
+                        if !vks.contains(&vk) {
+                            vks.push(vk)
+                        }
+                    }
+                    Err(e) => return GetVkResponse {
+                        vks: vks,
+                        error: Some(e.to_string()),
+                    },
+                },
+                Err(e) => return GetVkResponse {
+                    vks: vks,
                     error: Some(e.to_string()),
                 },
-            },
-            Err(e) => GetVkResponse {
-                vk: String::new(),
-                error: Some(e.to_string()),
-            },
+            }
+        }
+
+        GetVkResponse {
+            vks: vks,
+            error: None,
         }
     }
 
