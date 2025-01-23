@@ -164,7 +164,8 @@ Now edit the `config.json` file to supply your Sindri API key.
 
 Compile and launch the prover via
 ```bash
-cargo run --release
+make build
+./target/release/sindri-scroll-sdk
 ```
 
 

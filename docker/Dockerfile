@@ -8,7 +8,7 @@ WORKDIR /usr/src/app
 COPY . .
 
 # Build the project
-RUN cargo build --release
+RUN make build
 
 # Create a new stage with a minimal Ubuntu image
 FROM ubuntu:20.04
