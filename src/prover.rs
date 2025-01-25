@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 use core::time::Duration;
 use reqwest::{
-    header::{CONTENT_ENCODING, CONTENT_TYPE},
+    header::{CONTENT_TYPE},
     Url,
 };
 use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
@@ -380,7 +380,6 @@ impl CloudProver {
         let resp_builder = resp_builder
             .timeout(self.send_timeout)
             .header(CONTENT_TYPE, "application/json")
-            .header(CONTENT_ENCODING, "gzip")
             .bearer_auth(&self.api_key);
 
         let response = resp_builder.send().await?;
