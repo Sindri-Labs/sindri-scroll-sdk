@@ -1,9 +1,6 @@
 use async_trait::async_trait;
 use core::time::Duration;
-use reqwest::{
-    header::{CONTENT_TYPE},
-    Url,
-};
+use reqwest::{header::CONTENT_TYPE, Url};
 use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
 use reqwest_retry::{policies::ExponentialBackoff, RetryTransientMiddleware};
 use serde::{Deserialize, Serialize};
