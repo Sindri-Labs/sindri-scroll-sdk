@@ -16,6 +16,9 @@ jobs:
     runs-on: ubuntu-latest
     # Do not run on draft pull requests
     if: ${{ github.event_name == 'push' || !github.event.pull_request.draft }}
+    env:
+      # Necessary to get librocksdb to compile.
+      CXXFLAGS: "-O3 -std=c++17 -include cstdint"
 
     steps:
       - name: Checkout code
