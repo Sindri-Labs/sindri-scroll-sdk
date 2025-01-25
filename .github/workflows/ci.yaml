@@ -18,7 +18,7 @@ jobs:
     if: ${{ github.event_name == 'push' || !github.event.pull_request.draft }}
     env:
       # Necessary to get librocksdb to compile.
-      CXXFLAGS: "-O3 -std=c++17 -include cstdint"
+      CXXFLAGS: "-std=c++17 -include cstdint"
 
     steps:
       - name: Checkout code
