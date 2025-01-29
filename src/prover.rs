@@ -1,3 +1,4 @@
+use crate::middleware::ZstdRequestCompressionMiddleware;
 use async_trait::async_trait;
 use core::time::Duration;
 use reqwest::{header::CONTENT_TYPE, Url};
@@ -283,6 +284,7 @@ impl CloudProver {
             .build_with_max_retries(cfg.retry_count);
         let client = ClientBuilder::new(reqwest::Client::new())
             .with(RetryTransientMiddleware::new_with_policy(retry_policy))
+            .with(ZstdRequestCompressionMiddleware)
             .build();
 
         let base_url = Url::parse(&cfg.base_url).expect("cannot parse cloud prover base_url");
