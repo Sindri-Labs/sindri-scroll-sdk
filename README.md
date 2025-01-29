@@ -169,12 +169,11 @@ cargo run --release
 
 ### Docker Build
 
-You can build the docker image via
+You can use the [`compose.yaml`][./compose.yaml] Docker Compose configuration to build and launch the prover inside a container.
+Make sure you follow the initial part of the previous section to get your own `config.json` file first because this will be mounted in the container.
+This command is roughly equivalent to `cargo run --release`, it will efficiently rebuild the prover with caching and run the prover inside of a container.
+You can use Ctrl-C to kill it and the container will be automatically cleaned up afterwards.
+
 ```bash
-docker build -t sindri-prover -f docker/Dockerfile .
-```
-You can then use the example docker compose configuration to launch the container via the following command.
-Make sure you follow the initial part of the previous section to get your own `config.json` file.
-```bash
-docker compose --profile=prover up -d
+docker run --rm --build prover
 ```
