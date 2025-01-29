@@ -285,6 +285,7 @@ impl CloudProver {
         let client = ClientBuilder::new(reqwest::Client::new())
             .with(RetryTransientMiddleware::new_with_policy(retry_policy))
             .with(ZstdRequestCompressionMiddleware)
+            .zstd(true) // Zstd response compression.
             .build();
 
         let base_url = Url::parse(&cfg.base_url).expect("cannot parse cloud prover base_url");
