@@ -372,13 +372,16 @@ impl CloudProver {
         log::info!("[Sindri client]: {:?}", url.as_str());
 
         let resp_builder = match request_body {
-            Some(body) => self.client.post(url).body(body),
+            Some(body) => self
+                .client
+                .post(url)
+                .header(CONTENT_TYPE, "application/json")
+                .body(body),
             None => self.client.get(url),
         };
 
         let resp_builder = resp_builder
             .timeout(self.send_timeout)
-            .header(CONTENT_TYPE, "application/json")
             .bearer_auth(&self.api_key);
 
         let response = resp_builder.send().await?;
