@@ -1,8 +1,12 @@
-version: '3.8'
+version: "3.8"
 
 services:
   prover:
     image: sindri-prover
+    build:
+      context: ./
+      dockerfile: docker/Dockerfile
+    init: true
     volumes:
       - ./keys:/keys
       - ./config.json:/config.json
