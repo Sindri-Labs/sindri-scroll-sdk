@@ -8,6 +8,7 @@ use tokio::io::AsyncWriteExt;
 use tokio_util::io::ReaderStream;
 
 const BUFFER_SIZE: usize = 4096;
+const MIN_BODY_SIZE: usize = 512;
 
 #[derive(Debug)]
 pub struct ZstdRequestCompressionMiddleware;
@@ -21,7 +22,11 @@ impl Middleware for ZstdRequestCompressionMiddleware {
         next: Next<'_>,
     ) -> Result<Response> {
         // If the request has a body, compress it using zstd.
-        if let Some(bytes) = req.body().and_then(|b| b.as_bytes()) {
+        if let Some(bytes) = req
+            .body()
+            .and_then(|b| b.as_bytes())
+            .filter(|b| b.len() >= MIN_BODY_SIZE)
+        {
             // Create a new request with the same properties.
             let (method, url, headers, version) = (
                 req.method().clone(),
