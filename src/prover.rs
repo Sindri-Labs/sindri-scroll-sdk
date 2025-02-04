@@ -1,3 +1,4 @@
+use crate::middleware::ZstdRequestCompressionMiddleware;
 use async_trait::async_trait;
 use core::time::Duration;
 use reqwest::{header::CONTENT_TYPE, Url};
@@ -281,9 +282,13 @@ impl CloudProver {
         let retry_policy = ExponentialBackoff::builder()
             .retry_bounds(retry_wait_duration / 2, retry_wait_duration)
             .build_with_max_retries(cfg.retry_count);
-        let client = ClientBuilder::new(reqwest::Client::new())
-            .with(RetryTransientMiddleware::new_with_policy(retry_policy))
-            .build();
+        let client = ClientBuilder::new(
+            // Explicitly enable zstd response compression.
+            reqwest::Client::builder().zstd(true).build().unwrap(),
+        )
+        .with(RetryTransientMiddleware::new_with_policy(retry_policy))
+        .with(ZstdRequestCompressionMiddleware)
+        .build();
 
         let base_url = Url::parse(&cfg.base_url).expect("cannot parse cloud prover base_url");
         let api_url = base_url
@@ -370,13 +375,16 @@ impl CloudProver {
         log::info!("[Sindri client]: {:?}", url.as_str());
 
         let resp_builder = match request_body {
-            Some(body) => self.client.post(url).body(body),
+            Some(body) => self
+                .client
+                .post(url)
+                .header(CONTENT_TYPE, "application/json")
+                .body(body),
             None => self.client.get(url),
         };
 
         let resp_builder = resp_builder
             .timeout(self.send_timeout)
-            .header(CONTENT_TYPE, "application/json")
             .bearer_auth(&self.api_key);
 
         let response = resp_builder.send().await?;
