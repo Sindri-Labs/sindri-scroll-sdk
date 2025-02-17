@@ -10,3 +10,6 @@ keys/
 # Ignore custom values files
 demo/values/*
 !demo/values/*-demo.yaml
+
+# Ignore OS generated files
+.DS_Store

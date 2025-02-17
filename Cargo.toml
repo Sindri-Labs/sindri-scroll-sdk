@@ -19,7 +19,7 @@ http = "1.1.0"
 log = "0.4"
 once_cell = "1.19.0"
 rand = "0.8.5"
-reqwest = { version = "0.12.5", features = ["stream", "zstd"] }
+reqwest = { version = "0.12.6", features = ["stream", "zstd"] }
 reqwest-middleware = "0.3"
 reqwest-retry = "0.5"
 rlp = "0.5.2"
@@ -37,7 +37,7 @@ tracing-subscriber = { version = "0.3.18", features = ["env-filter"] }
 # Core Scroll dependencies
 prover_darwin = { git = "https://github.com/scroll-tech/zkevm-circuits.git", tag = "v0.12.2", package = "prover", default-features = false, features = ["parallel_syn", "scroll"] }
 prover_darwin_v2 = { git = "https://github.com/scroll-tech/zkevm-circuits.git", tag = "v0.13.1", package = "prover", default-features = false, features = ["parallel_syn", "scroll"] }
-scroll-proving-sdk = { git = "https://github.com/scroll-tech/scroll-proving-sdk.git", rev = "7f8dca4"}
+scroll-proving-sdk = { git = "https://github.com/scroll-tech/scroll-proving-sdk.git", rev = "32defde"}
 
 [patch.crates-io]
 ethers-signers  = { git = "https://github.com/scroll-tech/ethers-rs.git", branch = "v2.0.7" }

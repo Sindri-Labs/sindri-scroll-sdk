@@ -2,14 +2,17 @@ use crate::middleware::ZstdRequestCompressionMiddleware;
 use async_trait::async_trait;
 use core::time::Duration;
 use reqwest::{header::CONTENT_TYPE, Url};
+
+use anyhow::{anyhow, Result};
 use reqwest_middleware::{ClientBuilder, ClientWithMiddleware};
 use reqwest_retry::{policies::ExponentialBackoff, RetryTransientMiddleware};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::fs::File;
 
 use crate::utils::proving_timestamps_from_response;
 use scroll_proving_sdk::{
-    config::CloudProverConfig,
+    config::Config as SdkConfig,
     prover::{
         proving_service::{
             GetVkRequest, GetVkResponse, ProveRequest, ProveResponse, QueryTaskRequest,
@@ -18,6 +21,55 @@ use scroll_proving_sdk::{
         CircuitType, ProvingService,
     },
 };
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct CloudProverConfig {
+    pub sdk_config: SdkConfig,
+    pub base_url: String,
+    pub api_key: String,
+    pub retry_count: u32,
+    pub retry_wait_time_sec: u64,
+    pub connection_timeout_sec: u64,
+}
+
+impl CloudProverConfig {
+    pub fn from_reader<R>(reader: R) -> Result<Self>
+    where
+        R: std::io::Read,
+    {
+        serde_json::from_reader(reader).map_err(|e| anyhow!(e))
+    }
+
+    pub fn from_file(file_name: String) -> Result<Self> {
+        let file = File::open(file_name)?;
+        Self::from_reader(&file)
+    }
+
+    fn get_env_var(key: &str) -> Result<Option<String>> {
+        std::env::var_os(key)
+            .map(|val| {
+                val.to_str()
+                    .ok_or_else(|| anyhow!("{key} env var is not valid UTF-8"))
+                    .map(String::from)
+            })
+            .transpose()
+    }
+
+    pub fn from_file_and_env(file_name: String) -> Result<Self> {
+        let mut cfg = Self::from_file(file_name)?;
+        cfg.sdk_config.override_with_env()?;
+
+        if let Some(val) = Self::get_env_var("PROVING_SERVICE_BASE_URL")? {
+            cfg.base_url = val;
+        }
+
+        if let Some(val) = Self::get_env_var("PROVING_SERVICE_API_KEY")? {
+            cfg.api_key = val;
+        }
+
+        Ok(cfg)
+    }
+}
 
 pub struct CloudProver {
     base_url: Url,
@@ -118,27 +170,28 @@ impl ProvingService for CloudProver {
                 .await
             {
                 Ok(resp) => match reformat_vk(resp.verification_key.verification_key) {
-                    Ok(vk) =>{
+                    Ok(vk) => {
                         if !vks.contains(&vk) {
                             vks.push(vk)
                         }
                     }
-                    Err(e) => return GetVkResponse {
-                        vks: vks,
+                    Err(e) => {
+                        return GetVkResponse {
+                            vks,
+                            error: Some(e.to_string()),
+                        }
+                    }
+                },
+                Err(e) => {
+                    return GetVkResponse {
+                        vks,
                         error: Some(e.to_string()),
-                    },
-                },
-                Err(e) => return GetVkResponse {
-                    vks: vks,
-                    error: Some(e.to_string()),
-                },
+                    }
+                }
             }
         }
 
-        GetVkResponse {
-            vks: vks,
-            error: None,
-        }
+        GetVkResponse { vks, error: None }
     }
 
     async fn prove(&self, req: ProveRequest) -> ProveResponse {
