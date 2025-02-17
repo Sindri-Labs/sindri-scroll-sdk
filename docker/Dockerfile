@@ -8,7 +8,11 @@ WORKDIR /usr/src/app
 COPY . .
 
 # Build the project
-RUN make build
+RUN --mount=type=cache,target=/root/.cargo/registry \
+    --mount=type=cache,target=/root/.cargo/git \
+    --mount=type=cache,target=./target \
+    make build \
+    && cp target/release/sindri-scroll-sdk /usr/local/bin/sindri-scroll-sdk
 
 # Create a new stage with a minimal Ubuntu image
 FROM ubuntu:20.04
@@ -17,7 +21,7 @@ FROM ubuntu:20.04
 RUN apt-get update && apt-get install -y libssl-dev openssl ca-certificates && rm -rf /var/lib/apt/lists/*
 
 # Copy the built binary from the builder stage
-COPY --from=builder /usr/src/app/target/release/sindri-scroll-sdk /usr/local/bin/sindri-scroll-sdk
+COPY --from=builder /usr/local/bin/sindri-scroll-sdk /usr/local/bin/sindri-scroll-sdk
 
 # Set the entrypoint
 ENTRYPOINT ["sindri-scroll-sdk"]
