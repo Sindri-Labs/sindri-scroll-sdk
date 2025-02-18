@@ -11,7 +11,7 @@ COPY . .
 RUN --mount=type=cache,target=/root/.cargo/registry \
     --mount=type=cache,target=/root/.cargo/git \
     --mount=type=cache,target=./target \
-    cargo build --release \
+    make build \
     && cp target/release/sindri-scroll-sdk /usr/local/bin/sindri-scroll-sdk
 
 # Create a new stage with a minimal Ubuntu image

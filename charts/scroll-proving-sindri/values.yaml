@@ -54,28 +54,32 @@ probes:
 scrollConfig: |
   {}
 
-#  {
-#   "prover_name_prefix": "sindri_",
-#   "keys_dir": "keys",
-#   "coordinator": {
-#     "base_url": "https://coordinator-api.scrollsdk",
+# {
+#     "sdk_config": {
+#         "prover_name_prefix": "sindri_",
+#         "keys_dir": "keys",
+#         "db_path": "db",
+#         "coordinator": {
+#             "base_url": "https://coordinator-api:80",
+#             "retry_count": 3,
+#             "retry_wait_time_sec": 5,
+#             "connection_timeout_sec": 60
+#         },
+#         "l2geth": {
+#             "endpoint": "https://l2-rpc:8545"
+#         },
+#         "prover": {
+#             "circuit_types": [1,2,3],
+#             "circuit_version": "v0.13.1",
+#             "n_workers": 1
+#         },
+#         "health_listener_addr": "0.0.0.0:5678"
+#     },
+#     "base_url": "https://sindri.app",
+#     "api_key": "<your Sindri API key>",
 #     "retry_count": 3,
 #     "retry_wait_time_sec": 5,
 #     "connection_timeout_sec": 60
-#   },
-#   "l2geth": {
-#     "endpoint": "https://l2-rpc.scrollsdk"
-#   },
-#   "prover": {
-#     "circuit_type": 3,
-#     "circuit_version": "v0.13.1",
-#     "n_workers": 1,
-#     "cloud": {
-#       "base_url": "https://sindri.app/api/v1/",
-#       "api_key": <API_KEY>,
-#       "retry_count": 3,
-#       "retry_wait_time_sec": 5,
-#       "connection_timeout_sec": 60
-#     }
-#   }
-#  }
+# }
+
+
