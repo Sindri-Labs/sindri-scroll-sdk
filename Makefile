@@ -1,8 +1,8 @@
 .PHONY: build docker
 
-GO_TAG?=v4.4.87 
-GIT_REV?=ef157528 
-ZK_VERSION?=4009e55-e5ddf67
+GO_TAG?=v4.4.89
+GIT_REV?=b0bf0a7d 
+ZK_VERSION?=4009e55-1c5093c
 
 build:
 	GO_TAG=${GO_TAG} GIT_REV=${GIT_REV} ZK_VERSION=${ZK_VERSION} cargo build --release
